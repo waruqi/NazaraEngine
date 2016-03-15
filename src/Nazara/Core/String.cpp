@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
-#include <cstring>
 #include <limits>
 #include <sstream>
 #include <Utfcpp/utf8.h>
@@ -76,265 +75,24 @@ namespace Nz
 		}
 	}
 
-	/*!
-	* \ingroup core
-	* \class Nz::String
-	* \brief Core class that represents a string
-	*/
-
-	/*!
-	* \brief Constructs a String object by default
-	*/
-
-	String::String() :
-	m_sharedString(GetEmptyString())
-	{
-	}
-
-	/*!
-	* \brief Constructs a String object with a character
-	*
-	* \param character Single character
-	*/
-
-	String::String(char character)
-	{
-		if (character != '\0')
-		{
-			m_sharedString = std::make_shared<SharedString>(1);
-			m_sharedString->string[0] = character;
-		}
-		else
-			m_sharedString = GetEmptyString();
-	}
-
-	/*!
-	* \brief Constructs a String object with multiple times the same character
-	*
-	* \param rep Number of repetitions of the character
-	* \param character Single character
-	*/
-
-	String::String(std::size_t rep, char character)
-	{
-		if (rep > 0)
-		{
-			m_sharedString = std::make_shared<SharedString>(rep);
-
-			if (character != '\0')
-				std::memset(m_sharedString->string.get(), character, rep);
-		}
-		else
-			m_sharedString = GetEmptyString();
-	}
-
-	/*!
-	* \brief Constructs a String object with multiple times the same string
-	*
-	* \param rep Number of repetitions of the string
-	* \param string String to multiply
-	*/
-
-	String::String(std::size_t rep, const char* string) :
-	String(rep, string, (string) ? std::strlen(string) : 0)
-	{
-	}
-
-	/*!
-	* \brief Constructs a String object with multiple times the same string
-	*
-	* \param rep Number of repetitions of the string
-	* \param string String to multiply
-	* \param length Length of the string
-	*/
-
-	String::String(std::size_t rep, const char* string, std::size_t length)
-	{
-		std::size_t totalSize = rep*length;
-
-		if (totalSize > 0)
-		{
-			m_sharedString = std::make_shared<SharedString>(totalSize);
-
-			for (std::size_t i = 0; i < rep; ++i)
-				std::memcpy(&m_sharedString->string[i*length], string, length);
-		}
-		else
-			m_sharedString = GetEmptyString();
-	}
-
-	/*!
-	* \brief Constructs a String object with multiple times the same string
-	*
-	* \param rep Number of repetitions of the string
-	* \param string String to multiply
-	*/
-
-	String::String(std::size_t rep, const String& string) :
-	String(rep, string.GetConstBuffer(), string.GetSize())
-	{
-	}
-
-	/*!
-	* \brief Constructs a String object with a "C string"
-	*
-	* \param string String to represent
-	*/
-
-	String::String(const char* string) :
-	String(string, (string) ? std::strlen(string) : 0)
-	{
-	}
-
-	/*!
-	* \brief Constructs a String object with a "C string"
-	*
-	* \param string String to represent
-	* \param length Length of the string
-	*/
-
-	String::String(const char* string, std::size_t length)
-	{
-		if (length > 0)
-		{
-			m_sharedString = std::make_shared<SharedString>(length);
-			std::memcpy(m_sharedString->string.get(), string, length);
-		}
-		else
-			m_sharedString = GetEmptyString();
-	}
-
-	/*!
-	* \brief Constructs a String object which is a copy of another
-	*
-	* \param string String to copy
-	*/
-
-	String::String(const std::string& string) :
-	String(string.c_str(), string.size())
-	{
-	}
-
-	/*!
-	* \brief Appends the character to the string
-	* \return A reference to this
-	*
-	* \param character Single character
-	*
-	* \see Insert
-	*/
-
-	String& String::Append(char character)
-	{
-		return Insert(m_sharedString->size, character);
-	}
-
-	/*!
-	* \brief Appends the "C string" to the string
-	* \return A reference to this
-	*
-	* \param string String to add
-	*
-	* \see Insert
-	*/
-
-	String& String::Append(const char* string)
-	{
-		return Insert(m_sharedString->size, string);
-	}
-
-	/*!
-	* \brief Appends the "C string" to the string
-	* \return A reference to this
-	*
-	* \param string String to add
-	* \param length Size of the string
-	*
-	* \see Insert
-	*/
-
-	String& String::Append(const char* string, std::size_t length)
-	{
-		return Insert(m_sharedString->size, string, length);
-	}
-
-	/*!
-	* \brief Appends the string to the string
-	* \return A reference to this
-	*
-	* \param string String to add
-	*
-	* \see Insert
-	*/
-
-	String& String::Append(const String& string)
-	{
-		return Insert(m_sharedString->size, string);
-	}
-
-	/*!
-	* \brief Clears the content of the string
-	*
-	* \param keepBuffer Should the buffer be kept
-	*/
 
 	void String::Clear(bool keepBuffer)
-	{
-		if (keepBuffer)
+	{ 
+		if (m_isSmallString)
 		{
-			EnsureOwnership(true);
-			m_sharedString->size = 0;
+			m_smallString.buffer[0] = '\0';
+			m_smallString.size = 0;
 		}
 		else
-			ReleaseString();
-	}
-
-	/*!
-	* \Brief Checks whether the string contains the character
-	* \return true if found in the string
-	*
-	* \param character Single character
-	* \param start Index to begin the research
-	* \param flags Flag for the look up
-	*
-	* \see Find
-	*/
-
-	bool String::Contains(char character, std::intmax_t start, UInt32 flags) const
-	{
-		return Find(character, start, flags) != npos;
-	}
-
-	/*!
-	* \Brief Checks whether the string contains the "C string"
-	* \return true if found in the string
-	*
-	* \param string String to search
-	* \param start Index to begin the research
-	* \param flags Flag for the look up
-	*
-	* \see Find
-	*/
-
-	bool String::Contains(const char* string, std::intmax_t start, UInt32 flags) const
-	{
-		return Find(string, start, flags) != npos;
-	}
-
-	/*!
-	* \Brief Checks whether the string contains the string
-	* \return true if found in the string
-	*
-	* \param string String to search
-	* \param start Index to begin the research
-	* \param flags Flag for the look up
-	*
-	* \see Find
-	*/
-
-	bool String::Contains(const String& string, std::intmax_t start, UInt32 flags) const
-	{
-		return Find(string, start, flags) != npos;
+		{
+			if (keepBuffer)
+			{
+				EnsureOwnership(true);
+				m_sharedString->size = 0;
+			}
+			else
+				ReleaseString();
+		}
 	}
 
 	/*!
@@ -345,17 +103,13 @@ namespace Nz
 	* \param start Index to begin the research
 	* \param flags Flag for the look up
 	*/
-
 	unsigned int String::Count(char character, std::intmax_t start, UInt32 flags) const
 	{
-		if (character == '\0' || m_sharedString->size == 0)
+		if (character == '\0')
 			return 0;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return 0;
 
 		char* str = &m_sharedString->string[pos];
@@ -391,20 +145,16 @@ namespace Nz
 	* \param start Index to begin the research
 	* \param flags Flag for the look up
 	*/
-
 	unsigned int String::Count(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0)
+		if (!string || !string[0])
 			return 0;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return 0;
 
-		char* str = &m_sharedString->string[pos];
+		const char* str = GetConstBuffer();
 		unsigned int count = 0;
 		if (flags & CaseInsensitive)
 		{
@@ -489,42 +239,16 @@ namespace Nz
 		return count;
 	}
 
-	/*!
-	* \brief Counts the number of occurrences in the string
-	* \return Number of occurrences
-	*
-	* \param string String to count
-	* \param start Index to begin the research
-	* \param flags Flag for the look up
-	*/
-
-	unsigned int String::Count(const String& string, std::intmax_t start, UInt32 flags) const
-	{
-		return Count(string.GetConstBuffer(), start, flags);
-	}
-
-	/*!
-	* \brief Counts the number of occurrences of any characters in the list in the string
-	* \return Number of occurrences
-	*
-	* \param string String to match
-	* \param start Index to begin the research
-	* \param flags Flag for the look up
-	*/
-
 	unsigned int String::CountAny(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0)
+		if (!string || !string[0])
 			return 0;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return 0;
 
-		char* str = &m_sharedString->string[pos];
+		const char* str = GetConstBuffer();
 		unsigned int count = 0;
 		if (flags & HandleUtf8)
 		{
@@ -600,54 +324,14 @@ namespace Nz
 		return count;
 	}
 
-	/*!
-	* \brief Counts the number of occurrences of any characters in the list in the string
-	* \return Number of occurrences
-	*
-	* \param string String to match
-	* \param start Index to begin the research
-	* \param flags Flag for the look up
-	*/
-
-	unsigned int String::CountAny(const String& string, std::intmax_t start, UInt32 flags) const
-	{
-		return CountAny(string.GetConstBuffer(), start, flags);
-	}
-
-	/*!
-	* \brief Checks whether the string ends with the character
-	* \return true if it the case
-	*
-	* \param character Single character
-	* \param flags Flag for the look up
-	*
-	* \see StartsWith
-	*/
-
 	bool String::EndsWith(char character, UInt32 flags) const
 	{
-		if (m_sharedString->size == 0)
-			return 0;
-
+		std::size_t size = GetSize();
+		char lastCharacter = GetConstBuffer()[size - 1];
 		if (flags & CaseInsensitive)
-			return Detail::ToLower(m_sharedString->string[m_sharedString->size-1]) == Detail::ToLower(character);
+			return Detail::ToLower(lastCharacter) == Detail::ToLower(character);
 		else
-			return m_sharedString->string[m_sharedString->size-1] == character; // character == '\0' will always be false
-	}
-
-	/*!
-	* \brief Checks whether the string ends with the "C string"
-	* \return true if it the case
-	*
-	* \param string String to match
-	* \param flags Flag for the look up
-	*
-	* \see StartsWith
-	*/
-
-	bool String::EndsWith(const char* string, UInt32 flags) const
-	{
-		return EndsWith(string, std::strlen(string), flags);
+			return lastCharacter == character; // character == '\0' sera toujours faux
 	}
 
 	/*!
@@ -663,33 +347,22 @@ namespace Nz
 
 	bool String::EndsWith(const char* string, std::size_t length, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0 || length > m_sharedString->size)
+		std::size_t size = GetSize();
+
+		if (!string || !string[0] || length > size)
 			return false;
+
+		const char* buffer = GetConstBuffer();
 
 		if (flags & CaseInsensitive)
 		{
 			if (flags & HandleUtf8)
-				return Detail::Unicodecasecmp(&m_sharedString->string[m_sharedString->size - length], string) == 0;
+				return Detail::Unicodecasecmp(&buffer[size - length], string) == 0;
 			else
-				return Detail::Strcasecmp(&m_sharedString->string[m_sharedString->size - length], string) == 0;
+				return Detail::Strcasecmp(&buffer[size - length], string) == 0;
 		}
 		else
-			return std::strcmp(&m_sharedString->string[m_sharedString->size - length], string) == 0;
-	}
-
-	/*!
-	* \brief Checks whether the string ends with the string
-	* \return true if it the case
-	*
-	* \param string String to match
-	* \param flags Flag for the look up
-	*
-	* \see StartsWith
-	*/
-
-	bool String::EndsWith(const String& string, UInt32 flags) const
-	{
-		return EndsWith(string.GetConstBuffer(), string.m_sharedString->size, flags);
+			return std::strcmp(&buffer[size - length], string) == 0;
 	}
 
 	/*!
@@ -703,24 +376,23 @@ namespace Nz
 
 	std::size_t String::Find(char character, std::intmax_t start, UInt32 flags) const
 	{
-		if (character == '\0' || m_sharedString->size == 0)
+		if (character == '\0')
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
+
+		const char* buffer = GetConstBuffer();
 
 		if (flags & CaseInsensitive)
 		{
 			char ch = Detail::ToLower(character);
-			const char* str = m_sharedString->string.get();
+			const char* str = buffer;
 			do
 			{
 				if (Detail::ToLower(*str) == ch)
-					return str - m_sharedString->string.get();
+					return str - buffer;
 			}
 			while (*++str);
 
@@ -728,9 +400,9 @@ namespace Nz
 		}
 		else
 		{
-			char* ch = std::strchr(&m_sharedString->string[pos], character);
+			const char* ch = std::strchr(&buffer[pos], character);
 			if (ch)
-				return ch - m_sharedString->string.get();
+				return ch - buffer;
 			else
 				return npos;
 		}
@@ -747,17 +419,15 @@ namespace Nz
 
 	std::size_t String::Find(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0)
+		if (!string || !string[0])
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
 
-		char* str = &m_sharedString->string[pos];
+		const char* buffer = GetConstBuffer();
+		const char* str = &buffer[pos];
 		if (flags & CaseInsensitive)
 		{
 			if (flags & HandleUtf8)
@@ -780,7 +450,7 @@ namespace Nz
 						for (;;)
 						{
 							if (*it2 == '\0')
-								return ptrPos - m_sharedString->string.get();
+								return ptrPos - buffer;
 
 							if (*it == '\0')
 								return npos;
@@ -802,14 +472,14 @@ namespace Nz
 				{
 					if (Detail::ToLower(*str) == c)
 					{
-						char* ptrPos = str;
+						const char* ptrPos = str;
 						str++;
 
 						const char* ptr = &string[1];
 						for (;;)
 						{
 							if (*ptr == '\0')
-								return ptrPos - m_sharedString->string.get();
+								return ptrPos - buffer;
 
 							if (*str == '\0')
 								return npos;
@@ -827,50 +497,25 @@ namespace Nz
 		}
 		else
 		{
-			char* ch = std::strstr(&m_sharedString->string[pos], string);
+			const char* ch = std::strstr(&buffer[pos], string);
 			if (ch)
-				return ch - m_sharedString->string.get();
+				return ch - buffer;
 		}
 
 		return npos;
 	}
 
-	/*!
-	* \brief Finds the first index of the string in the string
-	* \return Index in the string
-	*
-	* \param string String to match
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
-	std::size_t String::Find(const String& string, std::intmax_t start, UInt32 flags) const
-	{
-		return Find(string.GetConstBuffer(), start, flags);
-	}
-
-	/*!
-	* \brief Finds the first index of any characters in the list in the string
-	* \return Index in the string
-	*
-	* \param string String to match
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
 	std::size_t String::FindAny(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (m_sharedString->size == 0 || !string || !string[0])
+		if (!string || !string[0])
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
 
-		char* str = &m_sharedString->string[pos];
+		const char* buffer = GetConstBuffer();
+		const char* str = &buffer[pos];
 		if (flags & HandleUtf8)
 		{
 			while (utf8::internal::is_trail(*str))
@@ -887,7 +532,7 @@ namespace Nz
 					do
 					{
 						if (character == Unicode::GetLowercase(*it2))
-							return it.base() - m_sharedString->string.get();
+							return it.base() - buffer;
 					}
 					while (*++it2);
 				}
@@ -901,7 +546,7 @@ namespace Nz
 					do
 					{
 						if (*it == *it2)
-							return it.base() - m_sharedString->string.get();
+							return it.base() - buffer;
 					}
 					while (*++it2);
 				}
@@ -919,7 +564,7 @@ namespace Nz
 					do
 					{
 						if (character == Detail::ToLower(*c))
-							return str - m_sharedString->string.get();
+							return str - buffer;
 					}
 					while (*++c);
 				}
@@ -929,49 +574,24 @@ namespace Nz
 			{
 				str = std::strpbrk(str, string);
 				if (str)
-					return str - m_sharedString->string.get();
+					return str - buffer;
 			}
 		}
 
 		return npos;
 	}
 
-	/*!
-	* \brief Finds the first index of any characters in the list in the string
-	* \return Index in the string
-	*
-	* \param string String to match
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
-	std::size_t String::FindAny(const String& string, std::intmax_t start, UInt32 flags) const
-	{
-		return FindAny(string.GetConstBuffer(), start, flags);
-	}
-
-	/*!
-	* \brief Finds the last index of the character in the string
-	* \return Index in the string
-	*
-	* \param character Single character
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
 	std::size_t String::FindLast(char character, std::intmax_t start, UInt32 flags) const
 	{
-		if (character == '\0' || m_sharedString->size == 0)
+		if (character == '\0')
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
 
-		char* ptr = &m_sharedString->string[m_sharedString->size-1];
+		const char* buffer = GetConstBuffer();
+		const char* ptr = &buffer[m_sharedString->size-1];
 
 		if (flags & CaseInsensitive)
 		{
@@ -979,18 +599,18 @@ namespace Nz
 			do
 			{
 				if (Detail::ToLower(*ptr) == character)
-					return ptr - m_sharedString->string.get();
+					return ptr - buffer;
 			}
-			while (ptr-- != m_sharedString->string.get());
+			while (ptr-- != buffer);
 		}
 		else
 		{
 			do
 			{
 				if (*ptr == character)
-					return ptr - m_sharedString->string.get();
+					return ptr - buffer;
 			}
-			while (ptr-- != m_sharedString->string.get());
+			while (ptr-- != buffer);
 		}
 
 		return npos;
@@ -1007,18 +627,17 @@ namespace Nz
 
 	std::size_t String::FindLast(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0)
+		if (!string || !string[0])
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
 
-		///Algo 1.FindLast#3 (Size of the pattern unknown)
-		const char* ptr = &m_sharedString->string[pos];
+		const char* buffer = GetConstBuffer();
+
+		///Algo 1.FindLast#3 (Taille du pattern inconnue)
+		const char* ptr = &buffer[pos];
 		if (flags & CaseInsensitive)
 		{
 			if (flags & HandleUtf8)
@@ -1040,9 +659,9 @@ namespace Nz
 						for (;;)
 						{
 							if (*it2 == '\0')
-								return it.base() - m_sharedString->string.get();
+								return it.base() - buffer;
 
-							if (tIt.base() > &m_sharedString->string[pos])
+							if (tIt.base() > &buffer[pos])
 								break;
 
 							if (Unicode::GetLowercase(*tIt) != Unicode::GetLowercase(*it2))
@@ -1053,7 +672,7 @@ namespace Nz
 						}
 					}
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer));
 			}
 			else
 			{
@@ -1067,9 +686,9 @@ namespace Nz
 						for (;;)
 						{
 							if (*p == '\0')
-								return ptr - m_sharedString->string.get();
+								return ptr - buffer;
 
-							if (tPtr > &m_sharedString->string[pos])
+							if (tPtr > &buffer[pos])
 								break;
 
 							if (Detail::ToLower(*tPtr) != Detail::ToLower(*p))
@@ -1080,7 +699,7 @@ namespace Nz
 						}
 					}
 				}
-				while (ptr-- != m_sharedString->string.get());
+				while (ptr-- != buffer);
 			}
 		}
 		else
@@ -1094,9 +713,9 @@ namespace Nz
 					for (;;)
 					{
 						if (*p == '\0')
-							return ptr - m_sharedString->string.get();
+							return ptr - buffer;
 
-						if (tPtr > &m_sharedString->string[pos])
+						if (tPtr > &buffer[pos])
 							break;
 
 						if (*tPtr != *p)
@@ -1107,7 +726,7 @@ namespace Nz
 					}
 				}
 			}
-			while (ptr-- != m_sharedString->string.get());
+			while (ptr-- != buffer);
 		}
 
 		return npos;
@@ -1124,18 +743,20 @@ namespace Nz
 
 	std::size_t String::FindLast(const String& string, std::intmax_t start, UInt32 flags) const
 	{
-		if (string.m_sharedString->size == 0 || string.m_sharedString->size > m_sharedString->size)
+		std::size_t size = GetSize();
+		std::size_t oSize = string.GetSize();
+		if (oSize > size)
+			return npos;
+		
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= size)
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
+		const char* buffer = GetConstBuffer();
+		const char* oBuffer = string.GetConstBuffer();
 
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size || string.m_sharedString->size > m_sharedString->size)
-			return npos;
-
-		const char* ptr = &m_sharedString->string[pos];
-		const char* limit = &m_sharedString->string[string.m_sharedString->size-1];
+		const char* ptr = &buffer[pos];
+		const char* limit = &buffer[oSize - 1];
 
 		if (flags & CaseInsensitive)
 		{
@@ -1159,9 +780,9 @@ namespace Nz
 						for (;;)
 						{
 							if (*it2 == '\0')
-								return it.base() - m_sharedString->string.get();
+								return it.base() - buffer;
 
-							if (tIt.base() > &m_sharedString->string[pos])
+							if (tIt.base() > &buffer[pos])
 								break;
 
 							if (Unicode::GetLowercase(*tIt) != Unicode::GetLowercase(*it2))
@@ -1176,22 +797,22 @@ namespace Nz
 			}
 			else
 			{
-				///Algo 1.FindLast#4 (Size of the pattern unknown)
-				char c = Detail::ToLower(string.m_sharedString->string[string.m_sharedString->size-1]);
+				///Algo 1.FindLast#4 (Taille du pattern connue)
+				char c = Detail::ToLower(oBuffer[oSize - 1]);
 				for (;;)
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						const char* p = &string.m_sharedString->string[string.m_sharedString->size-1];
-						for (; p >= &string.m_sharedString->string[0]; --p, --ptr)
+						const char* p = &oBuffer[oSize - 1];
+						for (; p >= &oBuffer[0]; --p, --ptr)
 						{
 							if (Detail::ToLower(*ptr) != Detail::ToLower(*p))
 								break;
 
-							if (p == &string.m_sharedString->string[0])
-								return ptr-m_sharedString->string.get();
+							if (p == &oBuffer[0])
+								return ptr - oBuffer;
 
-							if (ptr == m_sharedString->string.get())
+							if (ptr == buffer)
 								return npos;
 						}
 					}
@@ -1205,15 +826,15 @@ namespace Nz
 			///Algo 1.FindLast#4 (Size of the pattern known)
 			for (;;)
 			{
-				if (*ptr == string.m_sharedString->string[string.m_sharedString->size-1])
+				if (*ptr == oBuffer[string.m_sharedString->size-1])
 				{
-					const char* p = &string.m_sharedString->string[string.m_sharedString->size-1];
-					for (; p >= &string.m_sharedString->string[0]; --p, --ptr)
+					const char* p = &oBuffer[string.m_sharedString->size-1];
+					for (; p >= &oBuffer[0]; --p, --ptr)
 					{
 						if (*ptr != *p)
 							break;
 
-						if (p == &string.m_sharedString->string[0])
+						if (p == &oBuffer[0])
 							return ptr-m_sharedString->string.get();
 
 						if (ptr == m_sharedString->string.get())
@@ -1239,17 +860,16 @@ namespace Nz
 
 	std::size_t String::FindLastAny(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0)
+		if (!string || !string[0])
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
 
-		char* str = &m_sharedString->string[pos];
+		const char* buffer = GetConstBuffer();
+
+		const char* str = &buffer[pos];
 		if (flags & HandleUtf8)
 		{
 			while (utf8::internal::is_trail(*str))
@@ -1266,11 +886,11 @@ namespace Nz
 					do
 					{
 						if (character == Unicode::GetLowercase(*it2))
-							return it.base() - m_sharedString->string.get();
+							return it.base() - buffer;
 					}
 					while (*++it2);
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer);
 			}
 			else
 			{
@@ -1280,11 +900,11 @@ namespace Nz
 					do
 					{
 						if (*it == *it2)
-							return it.base() - m_sharedString->string.get();
+							return it.base() - buffer;
 					}
 					while (*++it2);
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer);
 			}
 		}
 		else
@@ -1298,11 +918,11 @@ namespace Nz
 					do
 					{
 						if (character == Detail::ToLower(*c))
-							return str - m_sharedString->string.get();
+							return str - buffer;
 					}
 					while (*++c);
 				}
-				while (str-- != m_sharedString->string.get());
+				while (str-- != buffer);
 			}
 			else
 			{
@@ -1312,55 +932,30 @@ namespace Nz
 					do
 					{
 						if (*str == *c)
-							return str - m_sharedString->string.get();
+							return str - buffer;
 					}
 					while (*++c);
 				}
-				while (str-- != m_sharedString->string.get());
+				while (str-- != buffer);
 			}
 		}
 
 		return npos;
 	}
 
-	/*!
-	* \brief Finds the last index of any characters in the list in the string
-	* \return Index in the string
-	*
-	* \param string String to match
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
-	std::size_t String::FindLastAny(const String& string, std::intmax_t start, UInt32 flags) const
-	{
-		return FindLastAny(string.GetConstBuffer(), start, flags);
-	}
-
-	/*!
-	* \brief Finds the last word in the string
-	* \return Index in the string
-	*
-	* \param string String to match
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
 	std::size_t String::FindLastWord(const char* string, std::intmax_t start, UInt32 flags) const
 	{
-		if (!string || !string[0] || m_sharedString->size == 0)
+		if (!string || !string[0])
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
+
+		const char* buffer = GetConstBuffer();
 
 		///Algo 2.FindLastWord#1 (Size of the pattern unknown)
-		const char* ptr = &m_sharedString->string[pos];
-
+		const char* ptr = &buffer[pos];
 		if (flags & HandleUtf8)
 		{
 			if (utf8::internal::is_trail(*ptr))
@@ -1376,7 +971,7 @@ namespace Nz
 				{
 					if (Unicode::GetLowercase(*it) == c)
 					{
-						if (it.base() != m_sharedString->string.get())
+						if (it.base() != buffer)
 						{
 							--it;
 							if (!(Unicode::GetCategory(*it++) & Unicode::Category_Separator))
@@ -1392,12 +987,12 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tIt == '\0' || Unicode::GetCategory(*tIt) & Unicode::Category_Separator)
-									return it.base() - m_sharedString->string.get();
+									return it.base() - buffer;
 								else
 									break;
 							}
 
-							if (tIt.base() > &m_sharedString->string[pos])
+							if (tIt.base() > &buffer[pos])
 								break;
 
 							if (Unicode::GetLowercase(*tIt) != Unicode::GetLowercase(*p))
@@ -1408,7 +1003,7 @@ namespace Nz
 						}
 					}
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer);
 			}
 			else
 			{
@@ -1418,7 +1013,7 @@ namespace Nz
 				{
 					if (*it == c)
 					{
-						if (it.base() != m_sharedString->string.get())
+						if (it.base() != buffer)
 						{
 							--it;
 							if (!(Unicode::GetCategory(*it++) & Unicode::Category_Separator))
@@ -1434,12 +1029,12 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tIt == '\0' || Unicode::GetCategory(*tIt) & Unicode::Category_Separator)
-									return it.base() - m_sharedString->string.get();
+									return it.base() - buffer;
 								else
 									break;
 							}
 
-							if (tIt.base() > &m_sharedString->string[pos])
+							if (tIt.base() > &buffer[pos])
 								break;
 
 							if (*tIt != *p)
@@ -1450,7 +1045,7 @@ namespace Nz
 						}
 					}
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer);
 			}
 		}
 		else
@@ -1462,7 +1057,7 @@ namespace Nz
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						if (ptr != m_sharedString->string.get() && !std::isspace(*(ptr-1)))
+						if (ptr != buffer && !std::isspace(*(ptr-1)))
 							continue;
 
 						const char* p = &string[1];
@@ -1472,12 +1067,12 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tPtr == '\0' || std::isspace(*tPtr))
-									return ptr-m_sharedString->string.get();
+									return ptr - buffer;
 								else
 									break;
 							}
 
-							if (tPtr > &m_sharedString->string[pos])
+							if (tPtr > &buffer[pos])
 								break;
 
 							if (Detail::ToLower(*tPtr) != Detail::ToLower(*p))
@@ -1488,7 +1083,7 @@ namespace Nz
 						}
 					}
 				}
-				while (ptr-- != m_sharedString->string.get());
+				while (ptr-- != buffer);
 			}
 			else
 			{
@@ -1496,7 +1091,7 @@ namespace Nz
 				{
 					if (*ptr == string[0])
 					{
-						if (ptr != m_sharedString->string.get() && !std::isspace(*(ptr-1)))
+						if (ptr != buffer && !std::isspace(*(ptr-1)))
 							continue;
 
 						const char* p = &string[1];
@@ -1506,12 +1101,12 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tPtr == '\0' || std::isspace(*tPtr))
-									return ptr-m_sharedString->string.get();
+									return ptr - buffer;
 								else
 									break;
 							}
 
-							if (tPtr > &m_sharedString->string[pos])
+							if (tPtr > &buffer[pos])
 								break;
 
 							if (*tPtr != *p)
@@ -1522,7 +1117,7 @@ namespace Nz
 						}
 					}
 				}
-				while (ptr-- != m_sharedString->string.get());
+				while (ptr-- != buffer);
 			}
 		}
 
@@ -1537,38 +1132,39 @@ namespace Nz
 	* \param start Index to begin the search
 	* \param flags Flag for the look up
 	*/
-
 	std::size_t String::FindLastWord(const String& string, std::intmax_t start, UInt32 flags) const
 	{
-		if (string.m_sharedString->size == 0 || string.m_sharedString->size > m_sharedString->size)
+		std::size_t size = GetSize();
+		if (string.IsEmpty() == 0 || string.GetSize() > size)
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= size)
 			return npos;
 
-		const char* ptr = &m_sharedString->string[pos];
-		const char* limit = &m_sharedString->string[string.m_sharedString->size-1];
+		std::size_t oSize = string.GetSize();
 
+		const char* buffer = GetConstBuffer();
+
+		const char* ptr = &buffer[pos];
+		const char* limit = &buffer[oSize - 1];
+
+		const char* oBuffer = string.GetConstBuffer();
 		if (flags & HandleUtf8)
 		{
 			if (utf8::internal::is_trail(*ptr))
-				utf8::unchecked::prior(ptr); // We ensure to have a pointer pointing to the beginning of the string
+				utf8::unchecked::prior(ptr); // We ensure to have a pointer pointing to the beginning of a character
 
 			utf8::unchecked::iterator<const char*> it(ptr);
 
 			if (flags & CaseInsensitive)
 			{
-				const char* t = string.GetConstBuffer(); // utf8(::unchecked)::next affects the iterator on argument
-				UInt32 c = Unicode::GetLowercase(utf8::unchecked::next(t));
+				UInt32 c = Unicode::GetLowercase(utf8::unchecked::next(oBuffer));
 				do
 				{
 					if (Unicode::GetLowercase(*it) == c)
 					{
-						if (it.base() != m_sharedString->string.get())
+						if (it.base() != buffer)
 						{
 							--it;
 							if (!(Unicode::GetCategory(*it++) & Unicode::Category_Separator))
@@ -1584,12 +1180,12 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tIt == '\0' || Unicode::GetCategory(*tIt) & Unicode::Category_Separator)
-									return it.base() - m_sharedString->string.get();
+									return it.base() - buffer;
 								else
 									break;
 							}
 
-							if (tIt.base() > &m_sharedString->string[pos])
+							if (tIt.base() > &buffer[pos])
 								break;
 
 							if (Unicode::GetLowercase(*tIt) != Unicode::GetLowercase(*p))
@@ -1600,24 +1196,23 @@ namespace Nz
 						}
 					}
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer);
 			}
 			else
 			{
-				const char* t = string.GetConstBuffer(); // utf8(::unchecked)::next affects the iterator on argument
-				UInt32 c = utf8::unchecked::next(t);
+				UInt32 c = utf8::unchecked::next(oBuffer);
 				do
 				{
 					if (*it == c)
 					{
-						if (it.base() != m_sharedString->string.get())
+						if (it.base() != buffer)
 						{
 							--it;
 							if (!(Unicode::GetCategory(*it++) & Unicode::Category_Separator))
 								continue;
 						}
 
-						utf8::unchecked::iterator<const char*> p(t);
+						utf8::unchecked::iterator<const char*> p(oBuffer);
 						utf8::unchecked::iterator<const char*> tIt = it;
 						++tIt;
 
@@ -1626,12 +1221,12 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tIt == '\0' || Unicode::GetCategory(*tIt) & Unicode::Category_Separator)
-									return it.base() - m_sharedString->string.get();
+									return it.base() - buffer;
 								else
 									break;
 							}
 
-							if (tIt.base() > &m_sharedString->string[pos])
+							if (tIt.base() > &buffer[pos])
 								break;
 
 							if (*tIt != *p)
@@ -1642,7 +1237,7 @@ namespace Nz
 						}
 					}
 				}
-				while (it--.base() != m_sharedString->string.get());
+				while (it--.base() != buffer);
 			}
 		}
 		else
@@ -1650,7 +1245,7 @@ namespace Nz
 			///Algo 2.FindLastWord#2 (Size of the pattern known)
 			if (flags & CaseInsensitive)
 			{
-				char c = Detail::ToLower(string.m_sharedString->string[string.m_sharedString->size-1]);
+				char c = Detail::ToLower(oBuffer[oSize - 1]);
 				do
 				{
 					if (Detail::ToLower(*ptr) == c)
@@ -1658,21 +1253,21 @@ namespace Nz
 						if (*(ptr+1) != '\0' && !std::isspace(*(ptr+1)))
 							continue;
 
-						const char* p = &string.m_sharedString->string[string.m_sharedString->size-1];
-						for (; p >= &string.m_sharedString->string[0]; --p, --ptr)
+						const char* p = &oBuffer[oSize - 1];
+						for (; p >= &oBuffer[0]; --p, --ptr)
 						{
 							if (Detail::ToLower(*ptr) != Detail::ToLower(*p))
 								break;
 
-							if (p == &string.m_sharedString->string[0])
+							if (p == &oBuffer[0])
 							{
-								if (ptr == m_sharedString->string.get() || std::isspace(*(ptr-1)))
-									return ptr-m_sharedString->string.get();
+								if (ptr == buffer || std::isspace(*(ptr - 1)))
+									return ptr - buffer;
 								else
 									break;
 							}
 
-							if (ptr == m_sharedString->string.get())
+							if (ptr == buffer)
 								return npos;
 						}
 					}
@@ -1683,18 +1278,18 @@ namespace Nz
 			{
 				do
 				{
-					if (*ptr == string.m_sharedString->string[string.m_sharedString->size-1])
+					if (*ptr == oBuffer[string.m_sharedString->size-1])
 					{
 						if (*(ptr+1) != '\0' && !std::isspace(*(ptr+1)))
 							continue;
 
-						const char* p = &string.m_sharedString->string[string.m_sharedString->size-1];
-						for (; p >= &string.m_sharedString->string[0]; --p, --ptr)
+						const char* p = &oBuffer[string.m_sharedString->size-1];
+						for (; p >= &oBuffer[0]; --p, --ptr)
 						{
 							if (*ptr != *p)
 								break;
 
-							if (p == &string.m_sharedString->string[0])
+							if (p == &oBuffer[0])
 							{
 								if (ptr == m_sharedString->string.get() || std::isspace(*(ptr-1)))
 									return ptr-m_sharedString->string.get();
@@ -1722,7 +1317,6 @@ namespace Nz
 	* \param start Index to begin the search
 	* \param flags Flag for the look up
 	*/
-
 	std::size_t String::FindWord(const char* string, std::intmax_t start, UInt32 flags) const
 	{
 		if (!string || !string[0] || m_sharedString->size == 0)
@@ -1903,20 +1497,17 @@ namespace Nz
 	* \param start Index to begin the search
 	* \param flags Flag for the look up
 	*/
-
 	std::size_t String::FindWord(const String& string, std::intmax_t start, UInt32 flags) const
 	{
-		if (string.m_sharedString->size == 0 || string.m_sharedString->size > m_sharedString->size)
+		if (string.GetSize() > GetSize())
 			return npos;
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
+		std::size_t pos = GetAbsolutePos(start);
 		if (pos >= m_sharedString->size)
 			return npos;
 
-		char* ptr = m_sharedString->string.get();
+		const char* buffer = GetConstBuffer();
+		const char* ptr = buffer;
 		if (flags & HandleUtf8)
 		{
 			///Algo 3.FindWord#3 (Iterator too slow for #2)
@@ -1934,7 +1525,7 @@ namespace Nz
 				{
 					if (*it == c)
 					{
-						if (it.base() != m_sharedString->string.get())
+						if (it.base() != buffer)
 						{
 							--it;
 							if (!(Unicode::GetCategory(*it++) & Unicode::Category_Separator))
@@ -1950,7 +1541,7 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tIt == '\0' || Unicode::GetCategory(*it++) & Unicode::Category_Separator)
-									return it.base() - m_sharedString->string.get();
+									return it.base() - buffer;
 								else
 									break;
 							}
@@ -1974,7 +1565,7 @@ namespace Nz
 				{
 					if (*it == c)
 					{
-						if (it.base() != m_sharedString->string.get())
+						if (it.base() != buffer)
 						{
 							--it;
 							if (!(Unicode::GetCategory(*it++) & Unicode::Category_Separator))
@@ -1990,7 +1581,7 @@ namespace Nz
 							if (*p == '\0')
 							{
 								if (*tIt == '\0' || Unicode::GetCategory(*it++) & Unicode::Category_Separator)
-									return it.base() - m_sharedString->string.get();
+									return it.base() - buffer;
 								else
 									break;
 							}
@@ -2011,22 +1602,22 @@ namespace Nz
 			///Algo 3.FindWord#2 (Size of the pattern known)
 			if (flags & CaseInsensitive)
 			{
-				char c = Detail::ToLower(string.m_sharedString->string[0]);
+				char c = Detail::ToLower(buffer[0]);
 				do
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						if (ptr != m_sharedString->string.get() && !std::isspace(*(ptr-1)))
+						if (ptr != buffer && !std::isspace(*(ptr-1)))
 							continue;
 
-						const char* p = &string.m_sharedString->string[1];
+						const char* p = &buffer[1];
 						const char* tPtr = ptr+1;
 						for (;;)
 						{
 							if (*p == '\0')
 							{
 								if (*tPtr == '\0' || std::isspace(*tPtr))
-									return ptr - m_sharedString->string.get();
+									return ptr - buffer;
 								else
 									break;
 							}
@@ -2043,11 +1634,12 @@ namespace Nz
 			}
 			else
 			{
+				std::size_t size = GetSize();
 				while ((ptr = std::strstr(ptr, string.GetConstBuffer())) != nullptr)
 				{
-					// If the word is really alone
-					if ((ptr == m_sharedString->string.get() || std::isspace(*(ptr-1))) && (*(ptr+m_sharedString->size) == '\0' || std::isspace(*(ptr+m_sharedString->size))))
-						return ptr - m_sharedString->string.get();
+					// Si le mot est bien isolé
+					if ((ptr == buffer || std::isspace(*(ptr-1))) && (*(ptr + size) == '\0' || std::isspace(*(ptr + size))))
+						return ptr - buffer;
 
 					ptr++;
 				}
@@ -2057,83 +1649,22 @@ namespace Nz
 		return npos;
 	}
 
-	/*!
-	* \brief Gets the raw buffer
-	* \return Raw buffer
-	*/
-
-	char* String::GetBuffer()
-	{
-		EnsureOwnership();
-
-		return m_sharedString->string.get();
-	}
-
-	/*!
-	* \brief Gets the capacity of the string
-	* \return Capacity of the string
-	*/
-
-	std::size_t String::GetCapacity() const
-	{
-		return m_sharedString->capacity;
-	}
-
-	/*!
-	* \brief Gets the raw buffer
-	* \return Raw buffer
-	*/
-
-	const char* String::GetConstBuffer() const
-	{
-		return m_sharedString->string.get();
-	}
-
-	/*!
-	* \brief Gets the length of the string
-	* \return Length of the string with UTF-8 awareness
-	*/
-
 	std::size_t String::GetLength() const
 	{
-		return utf8::distance(m_sharedString->string.get(), &m_sharedString->string[m_sharedString->size]);
-	}
-
-	/*!
-	* \brief Gets the size of the string
-	* \return Size of the string without UTF-8 awareness
-	*/
-
-	std::size_t String::GetSize() const
-	{
-		return m_sharedString->size;
-	}
-
-	/*!
-	* \brief Gets the std::string corresponding
-	* \return String in UTF-8
-	*/
-
-	std::string String::GetUtf8String() const
-	{
-		return std::string(m_sharedString->string.get(), m_sharedString->size);
+		const char* buffer = GetConstBuffer();
+		return utf8::distance(buffer, buffer + GetSize());
 	}
 
 	/*!
 	* \brief Gets the std::string corresponding
 	* \return String in UTF-16
 	*/
-
 	std::u16string String::GetUtf16String() const
 	{
-		if (m_sharedString->size == 0)
-			return std::u16string();
-
 		std::u16string str;
-		str.reserve(m_sharedString->size);
+		str.reserve(GetSize());
 
 		utf8::utf8to16(begin(), end(), std::back_inserter(str));
-
 		return str;
 	}
 
@@ -2144,14 +1675,10 @@ namespace Nz
 
 	std::u32string String::GetUtf32String() const
 	{
-		if (m_sharedString->size == 0)
-			return std::u32string();
-
 		std::u32string str;
-		str.reserve(m_sharedString->size);
+		str.reserve(GetSize());
 
 		utf8::utf8to32(begin(), end(), std::back_inserter(str));
-
 		return str;
 	}
 
@@ -2159,30 +1686,29 @@ namespace Nz
 	* \brief Gets the std::wstring corresponding
 	* \return String in Wide
 	*/
-
 	std::wstring String::GetWideString() const
 	{
 		static_assert(sizeof(wchar_t) == 2 || sizeof(wchar_t) == 4, "wchar_t size is not supported");
+
 		if (m_sharedString->size == 0)
 			return std::wstring();
 
 		std::wstring str;
-		str.reserve(m_sharedString->size);
+		str.reserve(GetSize());
 
 		if (sizeof(wchar_t) == 4) // I want a static_if :(
 			utf8::utf8to32(begin(), end(), std::back_inserter(str));
 		else
 		{
-			utf8::unchecked::iterator<const char*> it(m_sharedString->string.get());
-			do
+			utf8::unchecked::iterator<const char*> it(GetConstBuffer());
+			while (*it++)
 			{
 				char32_t cp = *it;
-				if (cp <= 0xFFFF && (cp < 0xD800 || cp > 0xDFFF)) // @Laurent Gomila
+				if (cp <= 0xFFFF && (cp < 0xD800 || cp > 0xDFFF))
 					str.push_back(static_cast<wchar_t>(cp));
 				else
 					str.push_back(L'?');
 			}
-			while (*it++);
 		}
 
 		return str;
@@ -2195,7 +1721,6 @@ namespace Nz
 	* \param start Index to begin the search
 	* \param flags Flag for the look up
 	*/
-
 	String String::GetWord(unsigned int index, UInt32 flags) const
 	{
 		std::size_t startPos = GetWordPosition(index, flags);
@@ -2298,7 +1823,6 @@ namespace Nz
 	* \param pos Position in the string
 	* \param character Single character
 	*/
-
 	String& String::Insert(std::intmax_t pos, char character)
 	{
 		return Insert(pos, &character, 1);
@@ -2311,7 +1835,6 @@ namespace Nz
 	* \param pos Position in the string
 	* \param string String to add
 	*/
-
 	String& String::Insert(std::intmax_t pos, const char* string)
 	{
 		return Insert(pos, string, std::strlen(string));
@@ -2370,49 +1893,6 @@ namespace Nz
 
 		return *this;
 	}
-
-	/*!
-	* \brief Inserts the string into the string
-	* \return A reference to this
-	*
-	* \param pos Position in the string
-	* \param string String to add
-	*/
-
-	String& String::Insert(std::intmax_t pos, const String& string)
-	{
-		return Insert(pos, string.GetConstBuffer(), string.m_sharedString->size);
-	}
-
-	/*!
-	* \brief Checks whether the string is empty
-	* \return true if string is empty
-	*/
-
-	bool String::IsEmpty() const
-	{
-		return m_sharedString->size == 0;
-	}
-
-	/*!
-	* \brief Checks whether the string is null
-	* \return true if string is null
-	*/
-
-	bool String::IsNull() const
-	{
-		return m_sharedString.get() == GetEmptyString().get();
-	}
-
-	/*!
-	* \brief Checks whether the string is a number
-	* \return true if string is a number
-	*
-	* \param base Base of the number
-	* \param flags Flag for the look up
-	*
-	* \remark Produces a NazaraError if base is not in [2, 36( with NAZARA_CORE_SAFE defined
-	*/
 
 	bool String::IsNumber(UInt8 base, UInt32 flags) const
 	{
@@ -4436,7 +3916,7 @@ namespace Nz
 
 	String::operator std::string() const
 	{
-		return std::string(m_sharedString->string.get(), m_sharedString->size);
+		return std::string(GetConstBuffer(), GetSize());
 	}
 
 	/*!
@@ -4445,7 +3925,7 @@ namespace Nz
 	*
 	* \param pos Index of the character
 	*
-	* \remark If pos is greather than the size, Resize is called
+	* \remark If pos is greater than the size, Resize is called
 	*/
 
 	char& String::operator[](std::size_t pos)
@@ -4638,7 +4118,7 @@ namespace Nz
 
 	String& String::operator+=(char character)
 	{
-		return Insert(m_sharedString->size, character);
+		return Append(character);
 	}
 
 	/*!
@@ -4650,7 +4130,7 @@ namespace Nz
 
 	String& String::operator+=(const char* string)
 	{
-		return Insert(m_sharedString->size, string);
+		return Append(string);
 	}
 
 	/*!
@@ -4662,7 +4142,7 @@ namespace Nz
 
 	String& String::operator+=(const std::string& string)
 	{
-		return Insert(m_sharedString->size, string.c_str(), string.size());
+		return Append(string.c_str(), string.size());
 	}
 
 	/*!
@@ -4674,7 +4154,7 @@ namespace Nz
 
 	String& String::operator+=(const String& string)
 	{
-		return Insert(m_sharedString->size, string);
+		return Append(string);
 	}
 
 	/*!
@@ -5031,12 +4511,6 @@ namespace Nz
 
 	int String::Compare(const String& first, const String& second)
 	{
-		if (first.m_sharedString->size == 0)
-			return (second.m_sharedString->size == 0) ? 0 : -1;
-
-		if (second.m_sharedString->size == 0)
-			return 1;
-
 		return std::strcmp(first.GetConstBuffer(), second.GetConstBuffer());
 	}
 
@@ -5257,10 +4731,10 @@ namespace Nz
 		else
 			count = 4;
 
-		auto str = std::make_shared<SharedString>(count);
-		utf8::append(character, str->string.get());
+		String str(count, '\0');
+		utf8::append(character, str.GetBuffer());
 
-		return String(std::move(str));
+		return str;
 	}
 
 	/*!
@@ -5293,7 +4767,7 @@ namespace Nz
 			count++;
 		while (*++ptr);
 
-		count *= 2; // We ensure to have enough place
+		count *= 2; //< Ensure sufficient storage (one char16_t can take up to two char8_t)
 
 		auto str = std::make_shared<SharedString>(count);
 
@@ -5333,10 +4807,10 @@ namespace Nz
 		}
 		while (*++ptr);
 
-		auto str = std::make_shared<SharedString>(count);
-		utf8::utf32to8(u32String, ptr, str->string.get());
+		String str(count, '\0');
+		utf8::utf32to8(u32String, ptr, str.GetBuffer());
 
-		return String(std::move(str));
+		return str;
 	}
 
 	/*!
@@ -5367,10 +4841,10 @@ namespace Nz
 		}
 		while (*++ptr);
 
-		auto str = std::make_shared<SharedString>(count);
-		utf8::utf32to8(wString, ptr, str->string.get());
+		String str(count, '\0');
+		utf8::utf32to8(wString, ptr, str.GetBuffer());
 
-		return String(std::move(str));
+		return str;
 	}
 
 	/*!
@@ -5418,7 +4892,7 @@ namespace Nz
 		if (str.IsEmpty())
 			return os;
 
-		return operator<<(os, str.m_sharedString->string.get());
+		return operator<<(os, str.GetConstBuffer());
 	}
 
 	/*!
@@ -5434,14 +4908,13 @@ namespace Nz
 		if (character == '\0')
 			return string;
 
-		if (string.IsEmpty())
-			return String(character);
+		String str(1 + string.GetSize(), '\0');
+		char* buffer = str.GetBuffer();
 
-		auto str = std::make_shared<String::SharedString>(string.m_sharedString->size + 1);
-		str->string[0] = character;
-		std::memcpy(&str->string[1], string.GetConstBuffer(), string.m_sharedString->size);
+		buffer[0] = character;
+		std::memcpy(&buffer[1], string.GetConstBuffer(), string.GetSize());
 
-		return String(std::move(str));
+		return str;
 	}
 
 	/*!
@@ -5461,13 +4934,16 @@ namespace Nz
 			return string;
 
 		std::size_t size = std::strlen(string);
-		std::size_t totalSize = size + nstring.m_sharedString->size;
+		std::size_t nsize = nstring.GetSize();
+		std::size_t totalSize = size + nsize;
 
-		auto str = std::make_shared<String::SharedString>(totalSize);
-		std::memcpy(str->string.get(), string, size);
-		std::memcpy(&str->string[size], nstring.GetConstBuffer(), nstring.m_sharedString->size+1);
+		String str(totalSize, '\0');
+		char* buffer = str.GetBuffer();
 
-		return String(std::move(str));
+		std::memcpy(buffer, string, size);
+		std::memcpy(&buffer[size], nstring.GetConstBuffer(), nsize + 1); //< Also copy EOS character
+
+		return str;
 	}
 
 	/*!
@@ -5483,343 +4959,19 @@ namespace Nz
 		if (string.empty())
 			return nstring;
 
-		if (nstring.m_sharedString->size == 0)
+		if (nstring.IsEmpty())
 			return string;
 
-		std::size_t totalSize = string.size() + nstring.m_sharedString->size;
+		std::size_t nsize = nstring.GetSize();
+		std::size_t totalSize = string.size() + nsize;
 
-		auto str = std::make_shared<String::SharedString>(totalSize);
-		std::memcpy(str->string.get(), string.c_str(), string.size());
-		std::memcpy(&str->string[string.size()], nstring.GetConstBuffer(), nstring.m_sharedString->size+1);
+		String str(totalSize, '\0');
+		char* buffer = str.GetBuffer();
+
+		std::memcpy(buffer, string.c_str(), string.size());
+		std::memcpy(&buffer[string.size()], nstring.GetConstBuffer(), nsize + 1); //< Also copy EOS character
 
 		return String(std::move(str));
-	}
-
-	/*!
-	* \brief Checks whether the first string is equal to the second string
-	* \return true if it is the case
-	*
-	* \param first String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator==(const String& first, const String& second)
-	{
-		if (first.m_sharedString->size == 0 || second.m_sharedString->size == 0)
-			return first.m_sharedString->size == second.m_sharedString->size;
-
-		if (first.m_sharedString->size != second.m_sharedString->size)
-			return false;
-
-		if (first.m_sharedString == second.m_sharedString)
-			return true;
-
-		return std::strcmp(first.GetConstBuffer(), second.GetConstBuffer()) == 0;
-	}
-
-	/*!
-	* \brief Checks whether the first string is equal to the second string
-	* \return false if it is the case
-	*
-	* \param first String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator!=(const String& first, const String& second)
-	{
-		return !operator==(first, second);
-	}
-
-	/*!
-	* \brief Checks whether the first string is less than the second string
-	* \return true if it is the case
-	*
-	* \param first String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<(const String& first, const String& second)
-	{
-		if (second.m_sharedString->size == 0)
-			return false;
-
-		if (first.m_sharedString->size == 0)
-			return true;
-
-		return std::strcmp(first.GetConstBuffer(), second.GetConstBuffer()) < 0;
-	}
-
-	/*!
-	* \brief Checks whether the first string is less or equal than the second string
-	* \return true if it is the case
-	*
-	* \param first String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<=(const String& first, const String& second)
-	{
-		return !operator<(second, first);
-	}
-
-	/*!
-	* \brief Checks whether the first string is greather than the second string
-	* \return true if it is the case
-	*
-	* \param first String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>(const String& first, const String& second)
-	{
-		return second < first;
-	}
-
-	/*!
-	* \brief Checks whether the first string is greather or equal than the second string
-	* \return true if it is the case
-	*
-	* \param first String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>=(const String& first, const String& second)
-	{
-		return !operator<(first, second);
-	}
-
-	/*!
-	* \brief Checks whether the string is equal to the character
-	* \return true if it is the case
-	*
-	* \param character Single character in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator==(char character, const String& nstring)
-	{
-		return nstring == character;
-	}
-
-	/*!
-	* \brief Checks whether the string is equal to the "C string"
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator==(const char* string, const String& nstring)
-	{
-		return nstring == string;
-	}
-
-	/*!
-	* \brief Checks whether the string is equal to the std::string
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator==(const std::string& string, const String& nstring)
-	{
-		return nstring == string;
-	}
-
-	/*!
-	* \brief Checks whether the string is equal to the character
-	* \return false if it is the case
-	*
-	* \param character Single character in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator!=(char character, const String& nstring)
-	{
-		return !operator==(character, nstring);
-	}
-
-	/*!
-	* \brief Checks whether the string is equal to the "C string"
-	* \return false if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator!=(const char* string, const String& nstring)
-	{
-		return !operator==(string, nstring);
-	}
-
-	/*!
-	* \brief Checks whether the string is equal to the std::string
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator!=(const std::string& string, const String& nstring)
-	{
-		return !operator==(string, nstring);
-	}
-
-	/*!
-	* \brief Checks whether the string is less than the character
-	* \return true if it is the case
-	*
-	* \param character Single character in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<(char character, const String& nstring)
-	{
-		return nstring > character;
-	}
-
-	/*!
-	* \brief Checks whether the string is less than the "C string"
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<(const char* string, const String& nstring)
-	{
-		return nstring > string;
-	}
-
-	/*!
-	* \brief Checks whether the string is less than the std::string
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<(const std::string& string, const String& nstring)
-	{
-		return nstring > string;
-	}
-
-	/*!
-	* \brief Checks whether the string is less or equal than the character
-	* \return true if it is the case
-	*
-	* \param character Single character in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<=(char character, const String& nstring)
-	{
-		return !operator<(nstring, String(character));
-	}
-
-	/*!
-	* \brief Checks whether the string is less or equal than the "C string"
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<=(const char* string, const String& nstring)
-	{
-		return !operator<(nstring, string);
-	}
-
-	/*!
-	* \brief Checks whether the string is less or equal than the std::string
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator<=(const std::string& string, const String& nstring)
-	{
-		return !operator<(nstring, string);
-	}
-
-	/*!
-	* \brief Checks whether the string is greather than the character
-	* \return true if it is the case
-	*
-	* \param character Single character in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>(char character, const String& nstring)
-	{
-		return nstring < character;
-	}
-
-	/*!
-	* \brief Checks whether the string is greather than the "C string"
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>(const char* string, const String& nstring)
-	{
-		return nstring < string;
-	}
-
-	/*!
-	* \brief Checks whether the string is greather than the std::string
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>(const std::string& string, const String& nstring)
-	{
-		return nstring < string;
-	}
-
-	/*!
-	* \brief Checks whether the string is greather or equal than the character
-	* \return true if it is the case
-	*
-	* \param character Single character in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>=(char character, const String& nstring)
-	{
-		return !operator<(character, nstring);
-	}
-
-	/*!
-	* \brief Checks whether the string is greather or equal than the "C string"
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>=(const char* string, const String& nstring)
-	{
-		return !operator<(string, nstring);
-	}
-
-	/*!
-	* \brief Checks whether the string is greather or equal than the std::string
-	* \return true if it is the case
-	*
-	* \param string String to compare in left hand side
-	* \param second String to compare in right hand side
-	*/
-
-	bool operator>=(const std::string& string, const String& nstring)
-	{
-		return !operator<(string, nstring);
 	}
 
 	/*!
@@ -5830,14 +4982,14 @@ namespace Nz
 
 	void String::EnsureOwnership(bool discardContent)
 	{
-		if (!m_sharedString)
+		if (m_isSmallString || !m_sharedString)
 			return;
 
 		if (!m_sharedString.unique())
 		{
-			auto newSharedString = std::make_shared<SharedString>(GetSize(), GetCapacity());
+			auto newSharedString = std::make_shared<SharedString>(m_sharedString->size, m_sharedString->capacity);
 			if (!discardContent)
-				std::memcpy(newSharedString->string.get(), GetConstBuffer(), GetSize()+1);
+				std::memcpy(newSharedString->string.get(), m_sharedString->string.get(), m_sharedString->size + 1);
 
 			m_sharedString = std::move(newSharedString);
 		}
@@ -5850,7 +5002,7 @@ namespace Nz
 
 	const std::shared_ptr<String::SharedString>& String::GetEmptyString()
 	{
-		static auto emptyString = std::make_shared<SharedString>();
+		static auto emptyString = std::make_shared<SharedString>(0);
 		return emptyString;
 	}
 

@@ -30,18 +30,18 @@ namespace Nz
 				TrimOnlyRight   = 0x08  // Trim(med), only cut the right part of the string
 			};
 
-			String();
-			explicit String(char character);
-			String(std::size_t rep, char character);
-			String(std::size_t rep, const char* string);
-			String(std::size_t rep, const char* string, std::size_t length);
-			String(std::size_t rep, const String& string);
-			String(const char* string);
-			String(const char* string, std::size_t length);
-			String(const std::string& string);
-			String(const String& string) = default;
-			String(String&& string) noexcept = default;
-			~String() = default;
+			inline String();
+			inline explicit String(char character);
+			inline String(std::size_t rep, char character);
+			inline String(std::size_t rep, const char* string);
+			inline String(std::size_t rep, const char* string, std::size_t length);
+			inline String(std::size_t rep, const String& string);
+			inline String(const char* string);
+			inline String(const char* string, std::size_t length);
+			inline String(const std::string& string);
+			inline String(const String& string);
+			inline String(String&& string) noexcept;
+			inline ~String();
 
 			String& Append(char character);
 			String& Append(const char* string);
@@ -50,42 +50,43 @@ namespace Nz
 
 			void Clear(bool keepBuffer = false);
 
-			bool Contains(char character, std::intmax_t start = 0, UInt32 flags = None) const;
-			bool Contains(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
-			bool Contains(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline bool Contains(char character, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline bool Contains(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline bool Contains(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
 
 			unsigned int Count(char character, std::intmax_t start = 0, UInt32 flags = None) const;
 			unsigned int Count(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
-			unsigned int Count(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline unsigned int Count(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
 			unsigned int CountAny(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
-			unsigned int CountAny(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline unsigned int CountAny(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
 
 			bool EndsWith(char character, UInt32 flags = None) const;
-			bool EndsWith(const char* string, UInt32 flags = None) const;
+			inline bool EndsWith(const char* string, UInt32 flags = None) const;
 			bool EndsWith(const char* string, std::size_t length, UInt32 flags = None) const;
-			bool EndsWith(const String& string, UInt32 flags = None) const;
+			inline bool EndsWith(const String& string, UInt32 flags = None) const;
 
 			std::size_t Find(char character, std::intmax_t start = 0, UInt32 flags = None) const;
 			std::size_t Find(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
-			std::size_t Find(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline std::size_t Find(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
 			std::size_t FindAny(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
-			std::size_t FindAny(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
+			inline std::size_t FindAny(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
 			std::size_t FindLast(char character, std::intmax_t start = -1, UInt32 flags = None) const;
 			std::size_t FindLast(const char* string, std::intmax_t start = -1, UInt32 flags = None) const;
 			std::size_t FindLast(const String& string, std::intmax_t start = -1, UInt32 flags = None) const;
 			std::size_t FindLastAny(const char* string, std::intmax_t start = -1, UInt32 flags = None) const;
-			std::size_t FindLastAny(const String& string, std::intmax_t start = -1, UInt32 flags = None) const;
+			inline std::size_t FindLastAny(const String& string, std::intmax_t start = -1, UInt32 flags = None) const;
 			std::size_t FindLastWord(const char* string, std::intmax_t start = -1, UInt32 flags = None) const;
 			std::size_t FindLastWord(const String& string, std::intmax_t start = -1, UInt32 flags = None) const;
 			std::size_t FindWord(const char* string, std::intmax_t start = 0, UInt32 flags = None) const;
 			std::size_t FindWord(const String& string, std::intmax_t start = 0, UInt32 flags = None) const;
 
-			char* GetBuffer();
-			std::size_t GetCapacity() const;
-			const char* GetConstBuffer() const;
+			inline std::size_t GetAbsolutePos(std::intmax_t pos) const;
+			inline char* GetBuffer();
+			inline std::size_t GetCapacity() const;
+			inline const char* GetConstBuffer() const;
 			std::size_t GetLength() const;
-			std::size_t GetSize() const;
-			std::string GetUtf8String() const;
+			inline std::size_t GetSize() const;
+			inline std::string GetUtf8String() const;
 			std::u16string GetUtf16String() const;
 			std::u32string GetUtf32String() const;
 			std::wstring GetWideString() const;
@@ -95,10 +96,10 @@ namespace Nz
 			String& Insert(std::intmax_t pos, char character);
 			String& Insert(std::intmax_t pos, const char* string);
 			String& Insert(std::intmax_t pos, const char* string, std::size_t length);
-			String& Insert(std::intmax_t pos, const String& string);
+			inline String& Insert(std::intmax_t pos, const String& string);
 
-			bool IsEmpty() const;
-			bool IsNull() const;
+			inline bool IsEmpty() const;
+			inline bool IsNull() const;
 			bool IsNumber(UInt8 radix = 10, UInt32 flags = CaseInsensitive) const;
 
 			bool Match(const char* pattern) const;
@@ -265,50 +266,69 @@ namespace Nz
 			NAZARA_CORE_API friend String operator+(const char* string, const String& nstring);
 			NAZARA_CORE_API friend String operator+(const std::string& string, const String& nstring);
 
-			NAZARA_CORE_API friend bool operator==(const String& first, const String& second);
-			NAZARA_CORE_API friend bool operator!=(const String& first, const String& second);
-			NAZARA_CORE_API friend bool operator<(const String& first, const String& second);
-			NAZARA_CORE_API friend bool operator<=(const String& first, const String& second);
-			NAZARA_CORE_API friend bool operator>(const String& first, const String& second);
-			NAZARA_CORE_API friend bool operator>=(const String& first, const String& second);
+			NAZARA_CORE_API friend inline bool operator==(const String& first, const String& second);
+			NAZARA_CORE_API friend inline bool operator!=(const String& first, const String& second);
+			NAZARA_CORE_API friend inline bool operator<(const String& first, const String& second);
+			NAZARA_CORE_API friend inline bool operator<=(const String& first, const String& second);
+			NAZARA_CORE_API friend inline bool operator>(const String& first, const String& second);
+			NAZARA_CORE_API friend inline bool operator>=(const String& first, const String& second);
 
-			NAZARA_CORE_API friend bool operator==(char character, const String& nstring);
-			NAZARA_CORE_API friend bool operator==(const char* string, const String& nstring);
-			NAZARA_CORE_API friend bool operator==(const std::string& string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator==(char character, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator==(const char* string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator==(const std::string& string, const String& nstring);
 
-			NAZARA_CORE_API friend bool operator!=(char character, const String& nstring);
-			NAZARA_CORE_API friend bool operator!=(const char* string, const String& nstring);
-			NAZARA_CORE_API friend bool operator!=(const std::string& string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator!=(char character, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator!=(const char* string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator!=(const std::string& string, const String& nstring);
 
-			NAZARA_CORE_API friend bool operator<(char character, const String& nstring);
-			NAZARA_CORE_API friend bool operator<(const char* string, const String& nstring);
-			NAZARA_CORE_API friend bool operator<(const std::string& string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator<(char character, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator<(const char* string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator<(const std::string& string, const String& nstring);
 
-			NAZARA_CORE_API friend bool operator<=(char character, const String& nstring);
-			NAZARA_CORE_API friend bool operator<=(const char* string, const String& nstring);
-			NAZARA_CORE_API friend bool operator<=(const std::string& string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator<=(char character, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator<=(const char* string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator<=(const std::string& string, const String& nstring);
 
-			NAZARA_CORE_API friend bool operator>(char character, const String& nstring);
-			NAZARA_CORE_API friend bool operator>(const char* string, const String& nstring);
-			NAZARA_CORE_API friend bool operator>(const std::string& string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator>(char character, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator>(const char* string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator>(const std::string& string, const String& nstring);
 
-			NAZARA_CORE_API friend bool operator>=(char character, const String& nstring);
-			NAZARA_CORE_API friend bool operator>=(const char* string, const String& nstring);
-			NAZARA_CORE_API friend bool operator>=(const std::string& string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator>=(char character, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator>=(const char* string, const String& nstring);
+			NAZARA_CORE_API friend inline bool operator>=(const std::string& string, const String& nstring);
 
 			static const std::size_t npos;
 
 		private:
 			struct SharedString;
+			using SharedStringPtr = std::shared_ptr<SharedString>;
 
-			String(std::shared_ptr<SharedString>&& sharedString);
+			static constexpr std::size_t s_ssoSize = sizeof(SharedStringPtr);
+			static constexpr std::size_t s_maxSSSize = sizeof(SharedStringPtr) - 2;
+
+			inline String(SharedStringPtr&& sharedString);
 
 			void EnsureOwnership(bool discardContent = false);
 			inline void ReleaseString();
 
-			static const std::shared_ptr<SharedString>& GetEmptyString();
+			static const SharedStringPtr& GetEmptyString();
 
-			std::shared_ptr<SharedString> m_sharedString;
+			struct SmallString
+			{
+				inline SmallString(const SmallString& smallStr);
+
+				inline SmallString& operator=(const SmallString& smallStr);
+
+				char size;
+				char buffer[s_maxSSSize + 1];
+			};
+
+			union
+			{
+				SharedStringPtr m_sharedString;
+				SmallString m_smallString;
+			};
+			bool m_isSmallString; //< Because of COW, can't put it anywhere else
 
 			struct SharedString
 			{
