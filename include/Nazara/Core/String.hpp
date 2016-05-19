@@ -93,8 +93,8 @@ namespace Nz
 			String GetWord(unsigned int index, UInt32 flags = None) const;
 			std::size_t GetWordPosition(unsigned int index, UInt32 flags = None) const;
 
-			String& Insert(std::intmax_t pos, char character);
-			String& Insert(std::intmax_t pos, const char* string);
+			inline String& Insert(std::intmax_t pos, char character);
+			inline String& Insert(std::intmax_t pos, const char* string);
 			String& Insert(std::intmax_t pos, const char* string, std::size_t length);
 			inline String& Insert(std::intmax_t pos, const String& string);
 
@@ -103,15 +103,15 @@ namespace Nz
 			bool IsNumber(UInt8 radix = 10, UInt32 flags = CaseInsensitive) const;
 
 			bool Match(const char* pattern) const;
-			bool Match(const String& pattern) const;
+			inline bool Match(const String& pattern) const;
 
-			String& Prepend(char character);
-			String& Prepend(const char* string);
-			String& Prepend(const char* string, std::size_t length);
-			String& Prepend(const String& string);
+			inline String& Prepend(char character);
+			inline String& Prepend(const char* string);
+			inline String& Prepend(const char* string, std::size_t length);
+			inline String& Prepend(const String& string);
 
 			unsigned int Replace(char oldCharacter, char newCharacter, std::intmax_t start = 0, UInt32 flags = None);
-			unsigned int Replace(const char* oldString, const char* replaceString, std::intmax_t start = 0, UInt32 flags = None);
+			inline unsigned int Replace(const char* oldString, const char* replaceString, std::intmax_t start = 0, UInt32 flags = None);
 			unsigned int Replace(const char* oldString, std::size_t oldLength, const char* replaceString, std::size_t replaceLength, std::intmax_t start = 0, UInt32 flags = None);
 			unsigned int Replace(const String& oldString, const String& replaceString, std::intmax_t start = 0, UInt32 flags = None);
 			unsigned int ReplaceAny(const char* oldCharacters, char replaceCharacter, std::intmax_t start = 0, UInt32 flags = None);

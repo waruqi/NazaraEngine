@@ -271,6 +271,30 @@ namespace Nz
 		return std::string(GetConstBuffer(), GetSize());
 	}
 
+	/*!
+	* \brief Inserts the character into the string
+	* \return A reference to this
+	*
+	* \param pos Position in the string
+	* \param character Single character
+	*/
+	inline String& String::Insert(std::intmax_t pos, char character)
+	{
+		return Insert(pos, &character, 1);
+	}
+
+	/*!
+	* \brief Inserts the "C string" into the string
+	* \return A reference to this
+	*
+	* \param pos Position in the string
+	* \param string String to add
+	*/
+	inline String& String::Insert(std::intmax_t pos, const char* string)
+	{
+		return Insert(pos, string, std::strlen(string));
+	}
+
 	inline String& String::Insert(std::intmax_t pos, const String& string)
 	{
 		return Insert(pos, string.GetConstBuffer(), string.m_sharedString->size);
@@ -284,6 +308,84 @@ namespace Nz
 	inline bool String::IsNull() const
 	{
 		return (!m_isSmallString) ? m_sharedString.get() == GetEmptyString().get() : false;
+	}
+
+	/*!
+	* \brief Checks whether the string matches the pattern
+	* \return true if string matches
+	*
+	* \param pattern Pattern to search
+	*/
+	inline bool String::Match(const String& pattern) const
+	{
+		return Match(pattern.m_sharedString->string.get());
+	}
+
+	/*!
+	* \brief Prepends the character to the string
+	* \return A reference to this
+	*
+	* \param character Single character
+	*
+	* \see Insert
+	*/
+	String& String::Prepend(char character)
+	{
+		return Insert(0, character);
+	}
+
+	/*!
+	* \brief Prepends the "C string" to the string
+	* \return A reference to this
+	*
+	* \param string String to add
+	*
+	* \see Insert
+	*/
+	String& String::Prepend(const char* string)
+	{
+		return Insert(0, string);
+	}
+
+	/*!
+	* \brief Prepends the "C string" to the string
+	* \return A reference to this
+	*
+	* \param string String to add
+	* \param length Size of the string
+	*
+	* \see Insert
+	*/
+	String& String::Prepend(const char* string, std::size_t length)
+	{
+		return Insert(0, string, length);
+	}
+
+	/*!
+	* \brief Prepends the string to the string
+	* \return A reference to this
+	*
+	* \param string String to add
+	*
+	* \see Insert
+	*/
+	String& String::Prepend(const String& string)
+	{
+		return Insert(0, string);
+	}
+
+	/*!
+	* \brief Replaces the old "C string" by the new one
+	* \return Number of changes
+	*
+	* \param oldCharacter Pattern to find
+	* \param newCharacter Pattern to change for
+	* \param start Index to begin the search
+	* \param flags Flag for the look up
+	*/
+	unsigned int String::Replace(const char* oldString, const char* replaceString, std::intmax_t start, UInt32 flags)
+	{
+		return Replace(oldString, std::strlen(oldString), replaceString, std::strlen(replaceString), start, flags);
 	}
 
 	inline bool operator==(const String& first, const String& second)

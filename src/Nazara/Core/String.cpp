@@ -672,7 +672,7 @@ namespace Nz
 						}
 					}
 				}
-				while (it--.base() != buffer));
+				while (it--.base() != buffer);
 			}
 			else
 			{
@@ -1819,30 +1819,6 @@ namespace Nz
 	}
 
 	/*!
-	* \brief Inserts the character into the string
-	* \return A reference to this
-	*
-	* \param pos Position in the string
-	* \param character Single character
-	*/
-	String& String::Insert(std::intmax_t pos, char character)
-	{
-		return Insert(pos, &character, 1);
-	}
-
-	/*!
-	* \brief Inserts the "C string" into the string
-	* \return A reference to this
-	*
-	* \param pos Position in the string
-	* \param string String to add
-	*/
-	String& String::Insert(std::intmax_t pos, const char* string)
-	{
-		return Insert(pos, string, std::strlen(string));
-	}
-
-	/*!
 	* \brief Inserts the "C string" into the string
 	* \return A reference to this
 	*
@@ -1850,46 +1826,51 @@ namespace Nz
 	* \param string String to add
 	* \param length Size of the string
 	*/
-
 	String& String::Insert(std::intmax_t pos, const char* string, std::size_t length)
 	{
 		if (length == 0)
 			return *this;
 
-		if (pos < 0)
-			pos = std::max<std::size_t>(m_sharedString->size + pos, 0);
+		NazaraAssert(string, "Invalid string with valid size");
 
-		std::size_t start = std::min<std::size_t>(pos, m_sharedString->size);
+		std::size_t size = GetSize();
+		std::size_t offset = std::min(GetAbsolutePos(pos), size);
 
 		// If buffer is already big enough
-		if (m_sharedString->capacity >= m_sharedString->size + length)
+		if (GetCapacity() >= size + length)
 		{
 			EnsureOwnership();
 
-			std::memmove(&m_sharedString->string[start+length], &m_sharedString->string[start], m_sharedString->size - start);
-			std::memcpy(&m_sharedString->string[start], string, length);
+			char* buffer = GetBuffer();
 
-			m_sharedString->size += length;
-			m_sharedString->string[m_sharedString->size] = '\0';
+			std::memmove(&buffer[offset + length], &buffer[offset], size - offset);
+			std::memcpy(&buffer[offset], string, length);
+			buffer[size + length] = '\0';
+
+			if (m_isSmallString)
+				m_smallString.size += length;
+			else
+				m_sharedString->size += length;
 		}
 		else
 		{
-			auto newString = std::make_shared<SharedString>(m_sharedString->size + length);
+			auto newString = std::make_shared<SharedString>(size + length);
 
 			char* ptr = newString->string.get();
 
-			if (start > 0)
+			if (offset > 0)
 			{
-				std::memcpy(ptr, m_sharedString->string.get(), start*sizeof(char));
-				ptr += start;
+				std::memcpy(ptr, m_sharedString->string.get(), offset*sizeof(char));
+				ptr += offset;
 			}
 
 			std::memcpy(ptr, string, length*sizeof(char));
 			ptr += length;
 
-			if (m_sharedString->size > start)
-				std::memcpy(ptr, &m_sharedString->string[start], m_sharedString->size - start);
+			if (m_sharedString->size > offset)
+				std::memcpy(ptr, &m_sharedString->string[offset], m_sharedString->size - offset);
 
+			m_isSmallString = false;
 			m_sharedString = std::move(newString);
 		}
 
@@ -1898,22 +1879,13 @@ namespace Nz
 
 	bool String::IsNumber(UInt8 base, UInt32 flags) const
 	{
-		#if NAZARA_CORE_SAFE
-		if (base < 2 || base > 36)
-		{
-			NazaraError("Base must be between 2 and 36");
-			return false;
-		}
-		#endif
-
-		if (m_sharedString->size == 0)
-			return false;
+		NazaraAssert(base >= 2 && base <= 36, "Base must be between 2 and 36");
 
 		String check = Simplified();
-		if (check.m_sharedString->size == 0)
+		if (check.IsEmpty())
 			return false;
 
-		char* ptr = (check.m_sharedString->string[0] == '-') ? &check.m_sharedString->string[1] : check.m_sharedString->string.get();
+		const char* ptr = (check[0] == '-') ? &check[1] : check.GetConstBuffer();
 
 		if (base > 10)
 		{
@@ -1972,7 +1944,7 @@ namespace Nz
 
 		// Par Jack Handy - akkhandy@hotmail.com
 		// From : http://www.codeproject.com/Articles/1088/Wildcard-string-compare-globbing
-		const char* str = m_sharedString->string.get();
+		const char* str = GetConstBuffer();
 		while (*str && *pattern != '*')
 		{
 			if (*pattern != *str && *pattern != '?')
@@ -2013,75 +1985,6 @@ namespace Nz
 	}
 
 	/*!
-	* \brief Checks whether the string matches the pattern
-	* \return true if string matches
-	*
-	* \param pattern Pattern to search
-	*/
-
-	bool String::Match(const String& pattern) const
-	{
-		return Match(pattern.m_sharedString->string.get());
-	}
-
-	/*!
-	* \brief Prepends the character to the string
-	* \return A reference to this
-	*
-	* \param character Single character
-	*
-	* \see Insert
-	*/
-
-	String& String::Prepend(char character)
-	{
-		return Insert(0, character);
-	}
-
-	/*!
-	* \brief Prepends the "C string" to the string
-	* \return A reference to this
-	*
-	* \param string String to add
-	*
-	* \see Insert
-	*/
-
-	String& String::Prepend(const char* string)
-	{
-		return Insert(0, string);
-	}
-
-	/*!
-	* \brief Prepends the "C string" to the string
-	* \return A reference to this
-	*
-	* \param string String to add
-	* \param length Size of the string
-	*
-	* \see Insert
-	*/
-
-	String& String::Prepend(const char* string, std::size_t length)
-	{
-		return Insert(0, string, length);
-	}
-
-	/*!
-	* \brief Prepends the string to the string
-	* \return A reference to this
-	*
-	* \param string String to add
-	*
-	* \see Insert
-	*/
-
-	String& String::Prepend(const String& string)
-	{
-		return Insert(0, string);
-	}
-
-	/*!
 	* \brief Replaces the old character by the new one
 	* \return Number of changes
 	*
@@ -2090,7 +1993,6 @@ namespace Nz
 	* \param start Index to begin the search
 	* \param flags Flag for the look up
 	*/
-
 	unsigned int String::Replace(char oldCharacter, char newCharacter, std::intmax_t start, UInt32 flags)
 	{
 		if (oldCharacter == '\0' || oldCharacter == newCharacter)
@@ -2099,16 +2001,13 @@ namespace Nz
 		if (newCharacter == '\0') // In this case, we must use a more advanced algorithm
 			return Replace(String(oldCharacter), String(), start);
 
-		if (start < 0)
-			start = std::max<std::size_t>(m_sharedString->size + start, 0);
-
-		std::size_t pos = static_cast<std::size_t>(start);
-		if (pos >= m_sharedString->size)
+		std::size_t pos = GetAbsolutePos(start);
+		if (pos >= GetSize())
 			return npos;
 
 		unsigned int count = 0;
-		char* ptr = &m_sharedString->string[pos];
-		bool found = false;
+		char* buffer = GetBuffer();
+		char* ptr = buffer;
 		if (flags & CaseInsensitive)
 		{
 			char character_lower = Detail::ToLower(oldCharacter);
@@ -2117,14 +2016,14 @@ namespace Nz
 			{
 				if (*ptr == character_lower || *ptr == character_upper)
 				{
-					if (!found)
+					if (count == 0)
 					{
-						std::ptrdiff_t offset = ptr - m_sharedString->string.get();
+						std::ptrdiff_t offset = ptr - buffer;
 
 						EnsureOwnership();
 
-						ptr = &m_sharedString->string[offset];
-						found = true;
+						buffer = GetBuffer();
+						ptr = buffer + offset; // In case we changed buffer
 					}
 
 					*ptr = newCharacter;
@@ -2137,14 +2036,14 @@ namespace Nz
 		{
 			while ((ptr = std::strchr(ptr, oldCharacter)) != nullptr)
 			{
-				if (!found)
+				if (count == 0)
 				{
-					std::ptrdiff_t offset = ptr-m_sharedString->string.get();
+					std::ptrdiff_t offset = ptr - buffer;
 
 					EnsureOwnership();
 
-					ptr = &m_sharedString->string[offset];
-					found = true;
+					buffer = GetBuffer();
+					ptr = buffer + offset; // In case we changed buffer
 				}
 
 				*ptr = newCharacter;
@@ -2160,28 +2059,12 @@ namespace Nz
 	* \return Number of changes
 	*
 	* \param oldCharacter Pattern to find
-	* \param newCharacter Pattern to change for
-	* \param start Index to begin the search
-	* \param flags Flag for the look up
-	*/
-
-	unsigned int String::Replace(const char* oldString, const char* replaceString, std::intmax_t start, UInt32 flags)
-	{
-		return Replace(oldString, std::strlen(oldString), replaceString, std::strlen(replaceString), start, flags);
-	}
-
-	/*!
-	* \brief Replaces the old "C string" by the new one
-	* \return Number of changes
-	*
-	* \param oldCharacter Pattern to find
 	* \param oldLength Length of the old string
 	* \param newCharacter Pattern to change for
 	* \param Length of the new string
 	* \param start Index to begin the search
 	* \param flags Flag for the look up
 	*/
-
 	unsigned int String::Replace(const char* oldString, std::size_t oldLength, const char* replaceString, std::size_t replaceLength, std::intmax_t start, UInt32 flags)
 	{
 		if (oldLength == 0)
@@ -2514,18 +2397,18 @@ namespace Nz
 	*
 	* \remark If bufferSize is smaller than the old one, nothing is done
 	*/
-
 	void String::Reserve(std::size_t bufferSize)
 	{
-		if (m_sharedString->capacity > bufferSize)
+		if (GetCapacity() > bufferSize)
 			return;
 
 		auto newString = std::make_shared<SharedString>(bufferSize);
-		newString->size = m_sharedString->size;
+		newString->size = GetSize();
 
-		if (m_sharedString->size > 0)
-			std::memcpy(newString->string.get(), m_sharedString->string.get(), m_sharedString->size);
+		if (newString->size > 0)
+			std::memcpy(newString->string.get(), GetConstBuffer(), newString->size);
 
+		m_isSmallString = false;
 		m_sharedString = std::move(newString);
 	}
 
@@ -5099,12 +4982,11 @@ namespace std
 	}
 
 	/*!
-	* \brief Swaps two strings, specialisation of std
+	* \brief Swaps two strings, specialization of std
 	*
 	* \param lhs First string
 	* \param rhs Second string
 	*/
-
 	void swap(Nz::String& lhs, Nz::String& rhs)
 	{
 		lhs.Swap(rhs);
