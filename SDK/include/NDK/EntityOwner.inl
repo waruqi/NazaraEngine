@@ -14,11 +14,6 @@ namespace Ndk
 		Reset(entity);
 	}
 
-	inline EntityOwner::EntityOwner(EntityOwner&& handle) :
-	EntityHandle(std::move(handle))
-	{
-	}
-
 	inline EntityOwner::~EntityOwner()
 	{
 		Reset(nullptr);
@@ -26,28 +21,21 @@ namespace Ndk
 
 	inline void EntityOwner::Reset(Entity* entity)
 	{
-		if (m_entity)
-			m_entity->Kill();
+		if (m_object)
+			m_object->Kill();
 
 		EntityHandle::Reset(entity);
 	}
 
 	inline void EntityOwner::Reset(EntityOwner&& handle)
 	{
-		Reset(handle.GetEntity());
-		handle.m_entity = nullptr;
+		Reset(handle.GetObject());
+		handle.m_object = nullptr;
 	}
 
 	inline EntityOwner& EntityOwner::operator=(Entity* entity)
 	{
 		Reset(entity);
-
-		return *this;
-	}
-
-	inline EntityOwner& EntityOwner::operator=(EntityOwner&& handle)
-	{
-		Reset(std::move(handle));
 
 		return *this;
 	}

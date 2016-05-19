@@ -2,7 +2,7 @@
 // This file is part of the "Nazara Engine - Utility module"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
-#include <Nazara/Network/RudpConnection.hpp>
+#include <Nazara/Network/RUdpConnection.hpp>
 #include <Nazara/Core/CallOnExit.hpp>
 #include <Nazara/Core/Log.hpp>
 #include <Nazara/Network/NetPacket.hpp>
@@ -18,6 +18,7 @@ namespace Nz
 	m_timeBeforePing(500'000), //< 0.5s
 	m_timeBeforeTimeOut(10'000'000), //< 10s
 	m_currentTime(0),
+	m_isSimulationEnabled(false),
 	m_shouldAcceptConnections(true)
 	{
 	}
@@ -34,7 +35,7 @@ namespace Nz
 		NetPacket connectionRequestPacket(NetCode_RequestConnection);
 		connectionRequestPacket << client.stateData1;
 
-		EnqueuePacket(client, PacketPriority_Immediate, PacketReliability_Unreliable, connectionRequestPacket);
+		EnqueuePacket(client, PacketPriority_Immediate, PacketReliability_Reliable, connectionRequestPacket);
 		return true;
 	}
 
@@ -63,7 +64,7 @@ namespace Nz
 		return Connect(hostnameAddress);
 	}
 
-	bool RUdpConnection::Listen(const IpAddress& address, unsigned int queueSize)
+	bool RUdpConnection::Listen(const IpAddress& address)
 	{
 		if (!InitSocket(address.GetProtocol()))
 			return false;
@@ -110,7 +111,7 @@ namespace Nz
 		{
 			PeerData& peer = m_peers[m_peerIterator];
 
-			UInt32 timeSinceLastPacket = m_currentTime - peer.lastPacketTime;
+			UInt32 timeSinceLastPacket = static_cast<UInt32>(m_currentTime - peer.lastPacketTime);
 			if (timeSinceLastPacket > m_timeBeforeTimeOut)
 			{
 				DisconnectPeer(peer.index);
@@ -349,6 +350,12 @@ namespace Nz
 			if (peer.receivedQueue.find(sequenceId) != peer.receivedQueue.end())
 				return; //< Ignore
 
+			if (m_isSimulationEnabled && m_packetLossProbability(s_randomGenerator))
+			{
+				NazaraNotice(m_socket.GetBoundAddress().ToString() + ": Lost packet " + String::Number(sequenceId) + " from " + peerIp.ToString() + " for simulation purpose");
+				return;
+			}
+
 			///< Receiving a packet from an acknowledged client means the connection works in both ways
 			if (peer.state == PeerState_Aknowledged && packet.GetNetCode() != NetCode_RequestConnection)
 			{
@@ -474,7 +481,7 @@ namespace Nz
 		return true;
 	}
 
-	inline void RUdpConnection::Uninitialize()
+	void RUdpConnection::Uninitialize()
 	{
 	}
 

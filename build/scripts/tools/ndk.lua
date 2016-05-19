@@ -1,5 +1,7 @@
 TOOL.Name = "SDK"
 
+TOOL.CopyTargetToExampleDir = true
+
 TOOL.Directory = "../SDK/lib"
 TOOL.Kind = "Library"
 
@@ -8,7 +10,8 @@ TOOL.Defines = {
 }
 
 TOOL.Includes = {
-	"../SDK/include"
+	"../SDK/include",
+	"../SDK/src"
 }
 
 TOOL.Files = {
@@ -23,9 +26,10 @@ TOOL.Libraries = {
 	"NazaraCore",
 	"NazaraAudio",
 	"NazaraLua",
+	"NazaraNetwork",
 	"NazaraNoise",
 	"NazaraPhysics",
 	"NazaraUtility",
 	"NazaraRenderer",
-	"NazaraGraphics",
+	"NazaraGraphics"
 }

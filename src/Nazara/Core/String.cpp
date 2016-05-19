@@ -1057,7 +1057,7 @@ namespace Nz
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						if (ptr != buffer && !std::isspace(*(ptr-1)))
+						if (ptr != buffer && (Unicode::GetCategory(*(ptr - 1)) & Unicode::Category_Separator) == 0)
 							continue;
 
 						const char* p = &string[1];
@@ -1066,7 +1066,7 @@ namespace Nz
 						{
 							if (*p == '\0')
 							{
-								if (*tPtr == '\0' || std::isspace(*tPtr))
+								if (*tPtr == '\0' || Unicode::GetCategory(*tPtr) & Unicode::Category_Separator)
 									return ptr - buffer;
 								else
 									break;
@@ -1091,7 +1091,7 @@ namespace Nz
 				{
 					if (*ptr == string[0])
 					{
-						if (ptr != buffer && !std::isspace(*(ptr-1)))
+						if (ptr != buffer && (Unicode::GetCategory(*(ptr - 1)) & Unicode::Category_Separator) == 0)
 							continue;
 
 						const char* p = &string[1];
@@ -1100,7 +1100,7 @@ namespace Nz
 						{
 							if (*p == '\0')
 							{
-								if (*tPtr == '\0' || std::isspace(*tPtr))
+								if (*tPtr == '\0' || Unicode::GetCategory(*tPtr) & Unicode::Category_Separator)
 									return ptr - buffer;
 								else
 									break;
@@ -1250,7 +1250,8 @@ namespace Nz
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						if (*(ptr+1) != '\0' && !std::isspace(*(ptr+1)))
+						char nextC = *(ptr + 1);
+						if (nextC != '\0' && (Unicode::GetCategory(nextC) & Unicode::Category_Separator_Space) == 0)
 							continue;
 
 						const char* p = &oBuffer[oSize - 1];
@@ -1261,7 +1262,7 @@ namespace Nz
 
 							if (p == &oBuffer[0])
 							{
-								if (ptr == buffer || std::isspace(*(ptr - 1)))
+								if (ptr == buffer || Unicode::GetCategory(*(ptr - 1)) & Unicode::Category_Separator_Space)
 									return ptr - buffer;
 								else
 									break;
@@ -1280,7 +1281,8 @@ namespace Nz
 				{
 					if (*ptr == oBuffer[string.m_sharedString->size-1])
 					{
-						if (*(ptr+1) != '\0' && !std::isspace(*(ptr+1)))
+						char nextC = *(ptr + 1);
+						if (nextC != '\0' && (Unicode::GetCategory(nextC) & Unicode::Category_Separator_Space) == 0)
 							continue;
 
 						const char* p = &oBuffer[string.m_sharedString->size-1];
@@ -1291,7 +1293,7 @@ namespace Nz
 
 							if (p == &oBuffer[0])
 							{
-								if (ptr == m_sharedString->string.get() || std::isspace(*(ptr-1)))
+								if (ptr == m_sharedString->string.get() || Unicode::GetCategory(*(ptr - 1)) & Unicode::Category_Separator_Space)
 									return ptr-m_sharedString->string.get();
 								else
 									break;
@@ -1428,7 +1430,7 @@ namespace Nz
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						if (ptr != m_sharedString->string.get() && !std::isspace(*(ptr-1)))
+						if (ptr != m_sharedString->string.get() && (Unicode::GetCategory(*(ptr - 1)) & Unicode::Category_Separator) == 0)
 							continue;
 
 						const char* p = &string[1];
@@ -1437,7 +1439,7 @@ namespace Nz
 						{
 							if (*p == '\0')
 							{
-								if (*tPtr == '\0' || std::isspace(*tPtr))
+								if (*tPtr == '\0' || Unicode::GetCategory(*tPtr) & Unicode::Category_Separator)
 									return ptr - m_sharedString->string.get();
 								else
 									break;
@@ -1459,7 +1461,7 @@ namespace Nz
 				{
 					if (*ptr == string[0])
 					{
-						if (ptr != m_sharedString->string.get() && !std::isspace(*(ptr-1)))
+						if (ptr != m_sharedString->string.get() && (Unicode::GetCategory(*(ptr-1)) & Unicode::Category_Separator) == 0)
 							continue;
 
 						const char* p = &string[1];
@@ -1468,7 +1470,7 @@ namespace Nz
 						{
 							if (*p == '\0')
 							{
-								if (*tPtr == '\0' || std::isspace(*tPtr))
+								if (*tPtr == '\0' || Unicode::GetCategory(*tPtr) & Unicode::Category_Separator)
 									return ptr - m_sharedString->string.get();
 								else
 									break;
@@ -1607,7 +1609,7 @@ namespace Nz
 				{
 					if (Detail::ToLower(*ptr) == c)
 					{
-						if (ptr != buffer && !std::isspace(*(ptr-1)))
+						if (ptr != buffer && (Unicode::GetCategory(*(ptr - 1)) & Unicode::Category_Separator_Space) == 0)
 							continue;
 
 						const char* p = &buffer[1];
@@ -1616,7 +1618,7 @@ namespace Nz
 						{
 							if (*p == '\0')
 							{
-								if (*tPtr == '\0' || std::isspace(*tPtr))
+								if (*tPtr == '\0' || Unicode::GetCategory(*tPtr) & Unicode::Category_Separator_Space)
 									return ptr - buffer;
 								else
 									break;
@@ -1637,8 +1639,8 @@ namespace Nz
 				std::size_t size = GetSize();
 				while ((ptr = std::strstr(ptr, string.GetConstBuffer())) != nullptr)
 				{
-					// Si le mot est bien isolé
-					if ((ptr == buffer || std::isspace(*(ptr-1))) && (*(ptr + size) == '\0' || std::isspace(*(ptr + size))))
+					// If the word is really alone
+					if ((ptr == m_sharedString->string.get() || Unicode::GetCategory(*(ptr-1)) & Unicode::Category_Separator_Space) && (*(ptr+m_sharedString->size) == '\0' || Unicode::GetCategory(*(ptr+m_sharedString->size)) & Unicode::Category_Separator_Space))
 						return ptr - buffer;
 
 					ptr++;
@@ -1746,7 +1748,7 @@ namespace Nz
 		{
 			do
 			{
-				if (std::isspace(*ptr))
+				if (Unicode::GetCategory(*ptr) & Unicode::Category_Separator)
 				{
 					endPos = static_cast<std::intmax_t>(ptr - m_sharedString->string.get() - 1);
 					break;
@@ -1798,7 +1800,7 @@ namespace Nz
 		{
 			do
 			{
-				if (std::isspace(*ptr))
+				if (Unicode::GetCategory(*ptr) & Unicode::Category_Separator)
 					inWord = false;
 				else
 				{
@@ -2674,14 +2676,12 @@ namespace Nz
 				EnsureOwnership(true);
 
 				m_sharedString->size = 1;
-				m_sharedString->string[0] = character;
 				m_sharedString->string[1] = '\0';
 			}
 			else
-			{
-				auto newString = std::make_shared<SharedString>(1);
-				newString->string[0] = character;
-			}
+				m_sharedString = std::make_shared<SharedString>(1);
+
+			m_sharedString->string[0] = character;
 		}
 		else
 			ReleaseString();
@@ -2907,7 +2907,7 @@ namespace Nz
 			const char* limit = &m_sharedString->string[m_sharedString->size];
 			do
 			{
-				if (std::isspace(*ptr))
+				if (Unicode::GetCategory(*ptr) & Unicode::Category_Separator)
 				{
 					if (inword)
 					{
@@ -3712,7 +3712,7 @@ namespace Nz
 				utf8::unchecked::iterator<const char*> it(m_sharedString->string.get());
 				do
 				{
-					if (Unicode::GetCategory(*it) & Unicode::Category_Separator)
+					if (*it != '\t' && (Unicode::GetCategory(*it) & Unicode::Category_Separator) == 0)
 						break;
 				}
 				while (*++it);
@@ -3727,7 +3727,7 @@ namespace Nz
 				utf8::unchecked::iterator<const char*> it(&m_sharedString->string[m_sharedString->size]);
 				while ((it--).base() != m_sharedString->string.get())
 				{
-					if (Unicode::GetCategory(*it) & Unicode::Category_Separator)
+					if (*it != '\t' && (Unicode::GetCategory(*it) & Unicode::Category_Separator) == 0)
 						break;
 				}
 
@@ -3743,7 +3743,8 @@ namespace Nz
 			{
 				for (; startPos < m_sharedString->size; ++startPos)
 				{
-					if (!std::isspace(m_sharedString->string[startPos]))
+                    char c = m_sharedString->string[startPos];
+					if (c != '\t' && (Unicode::GetCategory(c) & Unicode::Category_Separator) == 0)
 						break;
 				}
 			}
@@ -3753,7 +3754,8 @@ namespace Nz
 			{
 				for (; endPos > 0; --endPos)
 				{
-					if (!std::isspace(m_sharedString->string[endPos]))
+                    char c = m_sharedString->string[endPos];
+					if (c != '\t' && (Unicode::GetCategory(c) & Unicode::Category_Separator) == 0)
 						break;
 				}
 			}

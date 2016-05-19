@@ -9,6 +9,7 @@
 #include <Nazara/Math/Algorithm.hpp>
 #include <Nazara/Math/Quaternion.hpp>
 #include <Nazara/Utility/BufferMapper.hpp>
+#include <Nazara/Utility/MaterialData.hpp>
 #include <Nazara/Utility/Mesh.hpp>
 #include <Nazara/Utility/StaticMesh.hpp>
 #include <Nazara/Utility/Formats/MD2Constants.hpp>
@@ -99,7 +100,11 @@ namespace Nz
 					for (unsigned int i = 0; i < header.num_skins; ++i)
 					{
 						stream.Read(skin, 68*sizeof(char));
-						mesh->SetMaterial(i, baseDir + skin);
+
+						ParameterList matData;
+						matData.SetParameter(MaterialData::FilePath, baseDir + skin);
+
+						mesh->SetMaterialData(i, std::move(matData));
 					}
 				}
 			}
@@ -115,7 +120,7 @@ namespace Nz
 			stream.Read(&triangles[0], header.num_tris*sizeof(MD2_Triangle));
 
 			BufferMapper<IndexBuffer> indexMapper(indexBuffer, BufferAccess_DiscardAndWrite);
-			UInt16* index = reinterpret_cast<UInt16*>(indexMapper.GetPointer());
+			UInt16* index = static_cast<UInt16*>(indexMapper.GetPointer());
 
 			for (unsigned int i = 0; i < header.num_tris; ++i)
 			{
@@ -190,7 +195,7 @@ namespace Nz
 			translate *= s;
 
 			BufferMapper<VertexBuffer> vertexMapper(vertexBuffer, BufferAccess_DiscardAndWrite);
-			MeshVertex* vertex = reinterpret_cast<MeshVertex*>(vertexMapper.GetPointer());
+			MeshVertex* vertex = static_cast<MeshVertex*>(vertexMapper.GetPointer());
 
 			/// Chargement des coordonnées de texture
 			const unsigned int indexFix[3] = {0, 2, 1}; // Pour respécifier les indices dans le bon ordre

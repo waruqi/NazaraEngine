@@ -54,11 +54,11 @@ namespace Nz
 		int flags;
 		mode_t permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-		if (mode & OpenMode_ReadWrite)
+		if ((mode & OpenMode_ReadWrite) == OpenMode_ReadWrite)
 			flags = O_CREAT | O_RDWR;
-		else if (mode & OpenMode_ReadOnly)
+		else if ((mode & OpenMode_ReadOnly) == OpenMode_ReadOnly)
 			flags = O_RDONLY;
-		else if (mode & OpenMode_WriteOnly)
+		else if ((mode & OpenMode_WriteOnly) == OpenMode_WriteOnly)
 			flags = O_CREAT | O_WRONLY;
 		else
 			return false;
@@ -116,6 +116,11 @@ namespace Nz
 		m_endOfFileUpdated = false;
 
 		return lseek64(m_fileDescriptor, offset, moveMethod) != -1;
+	}
+
+	bool FileImpl::SetSize(UInt64 size)
+	{
+		return ftruncate64(m_fileDescriptor, size) != 0;
 	}
 
 	std::size_t FileImpl::Write(const void* buffer, std::size_t size)

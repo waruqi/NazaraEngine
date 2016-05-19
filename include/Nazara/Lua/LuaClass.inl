@@ -17,21 +17,41 @@ namespace Nz
 	}
 
 	template<class T>
+	inline void LuaClass<T>::BindDefaultConstructor()
+	{
+		SetConstructor([] (Nz::LuaInstance& lua, T* instance)
+		{
+			PlacementNew(instance);
+			return true;
+		});
+	}
+
+	template<class T>
 	template<class P>
 	inline void LuaClass<T>::Inherit(LuaClass<P>& parent)
+	{
+		Inherit<P>(parent, [] (T* instance) -> P*
+		{
+			return static_cast<P*>(instance);
+		});
+	}
+
+	template<class T>
+	template<class P>
+	inline void LuaClass<T>::Inherit(LuaClass<P>& parent, ConvertToParent<P> convertFunc)
 	{
 		static_assert(!std::is_same<P, T>::value || std::is_base_of<P, T>::value, "P must be a base of T");
 
 		std::shared_ptr<typename LuaClass<P>::ClassInfo>& parentInfo = parent.m_info;
-		
-		parentInfo->instanceGetters[m_info->name] = [info = m_info](LuaInstance& lua) -> P*
+
+		parentInfo->instanceGetters[m_info->name] = [info = m_info, convertFunc] (LuaInstance& lua) -> P*
 		{
-			return *static_cast<T**>(lua.CheckUserdata(1, info->name));
+			return convertFunc(static_cast<T*>(lua.CheckUserdata(1, info->name)));
 		};
 
-		m_info->parentGetters.emplace_back([parentInfo] (LuaInstance& lua, T& instance)
+		m_info->parentGetters.emplace_back([parentInfo, convertFunc] (LuaInstance& lua, T* instance)
 		{
-			LuaClass<P>::Get(parentInfo, lua, instance);
+			LuaClass<P>::Get(parentInfo, lua, convertFunc(instance));
 		});
 	}
 
@@ -44,8 +64,8 @@ namespace Nz
 		// cette UserData disposera d'un finalizer qui libérera le ClassInfo
 		// Ainsi c'est Lua qui va s'occuper de la destruction pour nous :-)
 		// De même, l'utilisation d'un shared_ptr permet de garder la structure en vie même si l'instance est libérée avant le LuaClass
-		void* info = lua.PushUserdata(sizeof(std::shared_ptr<ClassInfo>));
-		PlacementNew<std::shared_ptr<ClassInfo>>(info, m_info);
+		std::shared_ptr<ClassInfo>* info = static_cast<std::shared_ptr<ClassInfo>*>(lua.PushUserdata(sizeof(std::shared_ptr<ClassInfo>)));
+		PlacementNew(info, m_info);
 
 		// On créé la table qui contiendra une méthode (Le finalizer) pour libérer le ClassInfo
 		lua.PushTable(0, 1);
@@ -63,6 +83,15 @@ namespace Nz
 			// Set the type in a __type field
 			lua.PushString(m_info->name);
 			lua.SetField("__type");
+
+			// In case a __tostring method is missing, add a default implementation returning the type
+			if (m_methods.find("__tostring") == m_methods.end())
+			{
+				// Define the Finalizer
+				lua.PushValue(1); // shared_ptr on UserData
+				lua.PushCFunction(ToStringProxy, 1);
+				lua.SetField("__tostring");
+			}
 
 			// Define the Finalizer
 			lua.PushValue(1);
@@ -103,9 +132,9 @@ namespace Nz
 				lua.SetField(pair.first); // Method name
 			}
 
-			m_info->instanceGetters[m_info->name] = [info = m_info](LuaInstance& lua)
+			m_info->instanceGetters[m_info->name] = [info = m_info] (LuaInstance& lua)
 			{
-				return *static_cast<T**>(lua.CheckUserdata(1, info->name));
+				return static_cast<T*>(lua.CheckUserdata(1, info->name));
 			};
 		}
 		lua.Pop(); // On pop la metatable
@@ -194,18 +223,18 @@ namespace Nz
 	}
 
 	template<class T>
-	void LuaClass<T>::SetMethod(const String& name, ClassFunc method)
+	void LuaClass<T>::BindMethod(const String& name, ClassFunc method)
 	{
 		m_methods[name] = method;
 	}
 
 	template<class T>
 	template<typename R, typename P, typename... Args, typename... DefArgs>
-	std::enable_if_t<std::is_base_of<P, T>::value> LuaClass<T>::SetMethod(const String& name, R(P::*func)(Args...), DefArgs&&... defArgs)
+	std::enable_if_t<std::is_base_of<P, T>::value> LuaClass<T>::BindMethod(const String& name, R(P::*func)(Args...), DefArgs&&... defArgs)
 	{
 		typename LuaImplMethodProxy<Args...>::template Impl<DefArgs...> handler(std::forward<DefArgs>(defArgs)...);
 
-		SetMethod(name, [func, handler] (LuaInstance& lua, T& object) -> int
+		BindMethod(name, [func, handler] (LuaInstance& lua, T& object) -> int
 		{
 			handler.ProcessArgs(lua);
 
@@ -215,11 +244,11 @@ namespace Nz
 
 	template<class T>
 	template<typename R, typename P, typename... Args, typename... DefArgs>
-	std::enable_if_t<std::is_base_of<P, T>::value> LuaClass<T>::SetMethod(const String& name, R(P::*func)(Args...) const, DefArgs&&... defArgs)
+	std::enable_if_t<std::is_base_of<P, T>::value> LuaClass<T>::BindMethod(const String& name, R(P::*func)(Args...) const, DefArgs&&... defArgs)
 	{
 		typename LuaImplMethodProxy<Args...>::template Impl<DefArgs...> handler(std::forward<DefArgs>(defArgs)...);
 
-		SetMethod(name, [func, handler] (LuaInstance& lua, T& object) -> int
+		BindMethod(name, [func, handler] (LuaInstance& lua, T& object) -> int
 		{
 			handler.ProcessArgs(lua);
 
@@ -229,11 +258,11 @@ namespace Nz
 
 	template<class T>
 	template<typename R, typename P, typename... Args, typename... DefArgs>
-	std::enable_if_t<std::is_base_of<P, typename PointedType<T>::type>::value> LuaClass<T>::SetMethod(const String& name, R(P::*func)(Args...), DefArgs&&... defArgs)
+	std::enable_if_t<std::is_base_of<P, typename PointedType<T>::type>::value> LuaClass<T>::BindMethod(const String& name, R(P::*func)(Args...), DefArgs&&... defArgs)
 	{
 		typename LuaImplMethodProxy<Args...>::template Impl<DefArgs...> handler(std::forward<DefArgs>(defArgs)...);
 
-		SetMethod(name, [func, handler](LuaInstance& lua, T& object) -> int
+		BindMethod(name, [func, handler] (LuaInstance& lua, T& object) -> int
 		{
 			handler.ProcessArgs(lua);
 
@@ -243,11 +272,11 @@ namespace Nz
 
 	template<class T>
 	template<typename R, typename P, typename... Args, typename... DefArgs>
-	std::enable_if_t<std::is_base_of<P, typename PointedType<T>::type>::value> LuaClass<T>::SetMethod(const String& name, R(P::*func)(Args...) const, DefArgs&&... defArgs)
+	std::enable_if_t<std::is_base_of<P, typename PointedType<T>::type>::value> LuaClass<T>::BindMethod(const String& name, R(P::*func)(Args...) const, DefArgs&&... defArgs)
 	{
 		typename LuaImplMethodProxy<Args...>::template Impl<DefArgs...> handler(std::forward<DefArgs>(defArgs)...);
 
-		SetMethod(name, [func, handler](LuaInstance& lua, T& object) -> int
+		BindMethod(name, [func, handler] (LuaInstance& lua, T& object) -> int
 		{
 			handler.ProcessArgs(lua);
 
@@ -268,18 +297,18 @@ namespace Nz
 	}
 
 	template<class T>
-	void LuaClass<T>::SetStaticMethod(const String& name, StaticFunc method)
+	void LuaClass<T>::BindStaticMethod(const String& name, StaticFunc method)
 	{
 		m_staticMethods[name] = method;
 	}
 
 	template<class T>
 	template<typename R, typename... Args, typename... DefArgs>
-	void LuaClass<T>::SetStaticMethod(const String& name, R(*func)(Args...), DefArgs&&... defArgs)
+	void LuaClass<T>::BindStaticMethod(const String& name, R(*func)(Args...), DefArgs&&... defArgs)
 	{
 		typename LuaImplFunctionProxy<Args...>::template Impl<DefArgs...> handler(std::forward<DefArgs>(defArgs)...);
 
-		SetStaticMethod(name, [func, handler] (LuaInstance& lua) -> int
+		BindStaticMethod(name, [func, handler] (LuaInstance& lua) -> int
 		{
 			handler.ProcessArgs(lua);
 
@@ -303,14 +332,15 @@ namespace Nz
 
 		lua.Remove(1); // On enlève l'argument "table" du stack
 
-		T* instance = constructor(lua);
-		if (!instance)
+		T* instance = static_cast<T*>(lua.PushUserdata(sizeof(T)));
+
+		if (!constructor(lua, instance))
 		{
 			lua.Error("Constructor failed");
 			return 0; // Normalement jamais exécuté (l'erreur provoquant une exception)
 		}
 
-		lua.PushInstance(info->name.GetConstBuffer(), instance);
+		lua.SetMetatable(info->name);
 		return 1;
 	}
 
@@ -322,11 +352,11 @@ namespace Nz
 		std::shared_ptr<ClassInfo>& info = *static_cast<std::shared_ptr<ClassInfo>*>(lua.ToUserdata(lua.GetIndexOfUpValue(1)));
 		const FinalizerFunc& finalizer = info->finalizer;
 
-		T* instance = *static_cast<T**>(lua.CheckUserdata(1, info->name));
+		T* instance = static_cast<T*>(lua.CheckUserdata(1, info->name));
 		lua.Remove(1); //< Remove the instance from the Lua stack
 
 		if (!finalizer || finalizer(lua, *instance))
-			delete instance;
+			instance->~T();
 
 		return 0;
 	}
@@ -346,11 +376,11 @@ namespace Nz
 	}
 
 	template<class T>
-	void LuaClass<T>::Get(const std::shared_ptr<ClassInfo>& info, LuaInstance& lua, T& instance)
+	void LuaClass<T>::Get(const std::shared_ptr<ClassInfo>& info, LuaInstance& lua, T* instance)
 	{
 		const ClassIndexFunc& getter = info->getter;
 
-		if (!getter || !getter(lua, instance))
+		if (!getter || !getter(lua, *instance))
 		{
 			// Query from the metatable
 			lua.GetMetatable(info->name); //< Metatable
@@ -380,7 +410,7 @@ namespace Nz
 
 		std::shared_ptr<ClassInfo>& info = *static_cast<std::shared_ptr<ClassInfo>*>(lua.ToUserdata(lua.GetIndexOfUpValue(1)));
 
-		T& instance = *(*static_cast<T**>(lua.CheckUserdata(1, info->name)));
+		T* instance = static_cast<T*>(lua.CheckUserdata(1, info->name));
 		lua.Remove(1); //< Remove the instance from the Lua stack
 
 		Get(info, lua, instance);
@@ -406,9 +436,15 @@ namespace Nz
 					instance = it->second(lua);
 			}
 			lua.Pop(2);
+
+			lua.Remove(1); //< Remove the instance from the Lua stack
 		}
 
-		lua.Remove(1); //< Remove the instance from the Lua stack
+		if (!instance)
+		{
+			lua.Error("Method cannot be called without an object");
+			return 0;
+		}
 
 		unsigned int index = static_cast<unsigned int>(lua.ToInteger(lua.GetIndexOfUpValue(2)));
 		const ClassFunc& method = info->methods[index];
@@ -423,7 +459,7 @@ namespace Nz
 		std::shared_ptr<ClassInfo>& info = *static_cast<std::shared_ptr<ClassInfo>*>(lua.ToUserdata(lua.GetIndexOfUpValue(1)));
 		const ClassIndexFunc& setter = info->setter;
 
-		T& instance = *(*static_cast<T**>(lua.CheckUserdata(1, info->name)));
+		T& instance = *static_cast<T*>(lua.CheckUserdata(1, info->name));
 		lua.Remove(1); //< Remove the instance from the Lua stack
 
 		if (!setter(lua, instance))
@@ -484,6 +520,17 @@ namespace Nz
 			lua.Error("Class \"" + info->name + "\" has no static field \"" + String(str, length) + ')');
 		}
 
+		return 1;
+	}
+
+	template<class T>
+	int LuaClass<T>::ToStringProxy(lua_State* state)
+	{
+		LuaInstance& lua = *LuaInstance::GetInstance(state);
+
+		std::shared_ptr<ClassInfo>& info = *static_cast<std::shared_ptr<ClassInfo>*>(lua.ToUserdata(lua.GetIndexOfUpValue(1)));
+
+		lua.PushString(info->name);
 		return 1;
 	}
 }

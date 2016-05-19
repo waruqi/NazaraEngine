@@ -24,6 +24,7 @@ namespace Nz
 			ForwardRenderTechnique();
 			~ForwardRenderTechnique() = default;
 
+			void Clear(const SceneData& sceneData) const override;
 			bool Draw(const SceneData& sceneData) const override;
 
 			unsigned int GetMaxLightPassPerObject() const;
@@ -35,7 +36,7 @@ namespace Nz
 			static bool Initialize();
 			static void Uninitialize();
 
-		private:
+		protected:
 			struct ShaderUniforms;
 
 			void ChooseLights(const Spheref& object, bool includeDirectionalLights = true) const;
@@ -45,7 +46,7 @@ namespace Nz
 			void DrawTransparentModels(const SceneData& sceneData, ForwardRenderQueue::Layer& layer) const;
 			const ShaderUniforms* GetShaderUniforms(const Shader* shader) const;
 			void OnShaderInvalidated(const Shader* shader) const;
-			void SendLightUniforms(const Shader* shader, const LightUniforms& uniforms, unsigned int index, unsigned int uniformOffset) const;
+			void SendLightUniforms(const Shader* shader, const LightUniforms& uniforms, unsigned int index, unsigned int uniformOffset, UInt8 availableTextureUnit) const;
 
 			static float ComputeDirectionalLightScore(const Spheref& object, const AbstractRenderQueue::DirectionalLight& light);
 			static float ComputePointLightScore(const Spheref& object, const AbstractRenderQueue::PointLight& light);
@@ -88,6 +89,7 @@ namespace Nz
 			unsigned int m_maxLightPassPerObject;
 
 			static IndexBuffer s_quadIndexBuffer;
+			static TextureSampler s_shadowSampler;
 			static VertexBuffer s_quadVertexBuffer;
 			static VertexDeclaration s_billboardInstanceDeclaration;
 			static VertexDeclaration s_billboardVertexDeclaration;

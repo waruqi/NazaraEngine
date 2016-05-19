@@ -1,5 +1,7 @@
 TOOL.Name = "SDKServer"
 
+TOOL.CopyTargetToExampleDir = true
+
 TOOL.Directory = "../SDK/lib"
 TOOL.Kind = "Library"
 
@@ -9,7 +11,8 @@ TOOL.Defines = {
 }
 
 TOOL.Includes = {
-	"../SDK/include"
+	"../SDK/include",
+	"../SDK/src"
 }
 
 TOOL.Files = {
@@ -21,7 +24,7 @@ TOOL.Files = {
 }
 
 -- Exlude client-only files
-TOOL.FilesExclusion = {
+TOOL.FilesExcluded = {
 	"../SDK/**/CameraComponent.*",
 	"../SDK/**/Console.*",
 	"../SDK/**/GraphicsComponent.*",
@@ -29,14 +32,15 @@ TOOL.FilesExclusion = {
 	"../SDK/**/ListenerComponent.*",
 	"../SDK/**/ListenerSystem.*",
 	"../SDK/**/RenderSystem.*",
-	"../SDK/**/LuaAPI_Audio.*",
-	"../SDK/**/LuaAPI_Graphics.*",
-	"../SDK/**/LuaAPI_Renderer.*",
+	"../SDK/**/LuaBinding_Audio.*",
+	"../SDK/**/LuaBinding_Graphics.*",
+	"../SDK/**/LuaBinding_Renderer.*"
 }
 
 TOOL.Libraries = {
 	"NazaraCore",
 	"NazaraLua",
+    "NazaraNetwork",
 	"NazaraNoise",
 	"NazaraPhysics",
 	"NazaraUtility"

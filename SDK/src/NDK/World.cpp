@@ -14,7 +14,7 @@
 
 namespace Ndk
 {
-	World::~World()
+	World::~World() noexcept
 	{
 		// La destruction doit se faire dans un ordre précis
 		Clear();
@@ -61,7 +61,7 @@ namespace Ndk
 
 	void World::Clear() noexcept
 	{
-		///DOC: Tous les handles sont correctement invalidés
+		///DOC: Tous les handles sont correctement invalidés, les entités sont immédiatement invalidées
 
 		// Destruction des entités d'abord, et des handles ensuite
 		// ceci pour éviter que les handles n'informent les entités inutilement lors de leur destruction

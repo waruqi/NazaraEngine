@@ -109,6 +109,32 @@ namespace Nz
 	}
 
 	/*!
+	* \brief Constructs a Bitset copying an unsigned integral number
+	*
+	* \param value Number to be used as a base
+	*/
+	template<typename Block, class Allocator>
+	template<typename T>
+	Bitset<Block, Allocator>::Bitset(T value) :
+	Bitset()
+	{
+		if (sizeof(T) <= sizeof(Block))
+		{
+			m_bitCount = std::numeric_limits<T>::digits;
+			m_blocks.push_back(value);
+		}
+		else
+		{
+			// Note: I was kinda tired when I wrote this, there's probably a much easier method than checking bits to write bits
+			for (unsigned int bitPos = 0; bitPos < std::numeric_limits<T>::digits; bitPos++)
+			{
+				if (value & (T(1U) << bitPos))
+					UnboundedSet(bitPos, true);
+			}
+		}
+	}
+
+	/*!
 	* \brief Clears the content of the bitset, GetSize() is now equals to 0
 	*
 	* \remark The memory allocated is not released
@@ -303,8 +329,8 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::PerformsOR(const Bitset& a, const Bitset& b)
 	{
-		const Bitset& greater = (a.GetBlockCount() > b.GetBlockCount()) ? a : b;
-		const Bitset& lesser = (a.GetBlockCount() > b.GetBlockCount()) ? b : a;
+		const Bitset& greater = (a.GetSize() > b.GetSize()) ? a : b;
+		const Bitset& lesser = (a.GetSize() > b.GetSize()) ? b : a;
 
 		unsigned int maxBlockCount = greater.GetBlockCount();
 		unsigned int minBlockCount = lesser.GetBlockCount();
@@ -332,8 +358,8 @@ namespace Nz
 	template<typename Block, class Allocator>
 	void Bitset<Block, Allocator>::PerformsXOR(const Bitset& a, const Bitset& b)
 	{
-		const Bitset& greater = (a.GetBlockCount() > b.GetBlockCount()) ? a : b;
-		const Bitset& lesser = (a.GetBlockCount() > b.GetBlockCount()) ? b : a;
+		const Bitset& greater = (a.GetSize() > b.GetSize()) ? a : b;
+		const Bitset& lesser = (a.GetSize() > b.GetSize()) ? b : a;
 
 		unsigned int maxBlockCount = greater.GetBlockCount();
 		unsigned int minBlockCount = lesser.GetBlockCount();
@@ -633,7 +659,7 @@ namespace Nz
 	* \param bit Index of the bit
 	* \param val Value of the bit
 	*
-	* \remark if bit is greather than the number of bits, the bitset is enlarged and the added bits are set to false and the one at bit is set to val
+	* \remark if bit is greater than the number of bits, the bitset is enlarged and the added bits are set to false and the one at bit is set to val
 	*
 	* \see Set
 	*/
@@ -722,6 +748,22 @@ namespace Nz
 	}
 
 	/*!
+	* \brief Copies the internal representation of an unsigned integer
+	* \return A reference to this
+	*
+	* \param value Unsigned number which will be used as a source
+	*/
+	template<typename Block, class Allocator>
+	template<typename T>
+	Bitset<Block, Allocator>& Bitset<Block, Allocator>::operator=(T value)
+	{
+		Bitset bitset(value);
+		std::swap(*this, bitset);
+
+		return *this;
+	}
+
+	/*!
 	* \brief Performs an "AND" with another bitset
 	* \return A reference to this
 	*
@@ -793,7 +835,7 @@ namespace Nz
 
 		Block block = m_blocks[i];
 
-		// Compute the position of LSB in the block (and adjustement of the position)
+		// Compute the position of LSB in the block (and adjustment of the position)
 		return IntegralLog2Pot(block & -block) + i*bitsPerBlock;
 	}
 
