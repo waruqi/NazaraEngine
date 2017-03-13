@@ -8,6 +8,7 @@
 #define NAZARA_SOUNDBUFFER_HPP
 
 #include <Nazara/Prerequesites.hpp>
+#include <Nazara/Audio/Audio.hpp>
 #include <Nazara/Audio/Config.hpp>
 #include <Nazara/Audio/Enums.hpp>
 #include <Nazara/Core/ObjectRef.hpp>
@@ -40,7 +41,7 @@ namespace Nz
 
 	struct SoundBufferImpl;
 
-	class NAZARA_AUDIO_API SoundBuffer : public RefCounted, public Resource
+	class NAZARA_AUDIO_API SoundBuffer : public RefCounted, public Resource, ModuleDependency<Audio>
 	{
 		friend Sound;
 		friend SoundBufferLibrary;

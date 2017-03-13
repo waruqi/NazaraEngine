@@ -11,6 +11,7 @@
 #include <Nazara/Audio/Config.hpp>
 #include <Nazara/Audio/Enums.hpp>
 #include <Nazara/Core/Initializer.hpp>
+#include <Nazara/Core/ModuleDependency.hpp>
 #include <Nazara/Math/Quaternion.hpp>
 #include <Nazara/Math/Vector3.hpp>
 

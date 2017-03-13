@@ -16,18 +16,18 @@ namespace Nz
 	{
 		public:
 			Initializer(bool initialize = true);
-			Initializer(const Initializer&) = delete;
-			Initializer(Initializer&&) = delete; ///TODO
+			Initializer(const Initializer&);
+			Initializer(Initializer&&);
 			~Initializer();
 
 			bool Initialize();
 			bool IsInitialized() const;
 			void Uninitialize();
 
-			operator bool() const;
+			explicit operator bool() const;
 
-			Initializer& operator=(const Initializer&) = delete;
-			Initializer& operator=(Initializer&&) = delete; ///TODO
+			Initializer& operator=(const Initializer&);
+			Initializer& operator=(Initializer&&);
 
 		private:
 			bool m_initialized;

@@ -8,6 +8,7 @@
 #define NAZARA_SOUNDEMITTER_HPP
 
 #include <Nazara/Prerequesites.hpp>
+#include <Nazara/Audio/Audio.hpp>
 #include <Nazara/Audio/Config.hpp>
 #include <Nazara/Audio/Enums.hpp>
 #include <Nazara/Math/Vector3.hpp>
@@ -16,7 +17,7 @@
 
 namespace Nz
 {
-	class NAZARA_AUDIO_API SoundEmitter
+	class NAZARA_AUDIO_API SoundEmitter : ModuleDependency<Audio>
 	{
 		public:
 			virtual ~SoundEmitter();
