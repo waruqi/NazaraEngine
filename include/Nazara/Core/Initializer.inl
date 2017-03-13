@@ -156,7 +156,7 @@ namespace Nz
 	* \param init Initializer object
 	*/
 	template<typename ...Args>
-	Initializer& Initializer<Args...>::operator=(const Initializer& init)
+	Initializer<Args...>& Initializer<Args...>::operator=(const Initializer& init)
 	{
 		m_initialized = init.m_initialized;
 		if (m_initialized)
@@ -171,7 +171,7 @@ namespace Nz
 	* \param init Initializer object
 	*/
 	template<typename ...Args>
-	Initializer& Initializer<Args...>::operator=(Initializer&& init)
+	Initializer<Args...>& Initializer<Args...>::operator=(Initializer&& init)
 	{
 		m_initialized = init.m_initialized;
 		init.m_initialized = false;
