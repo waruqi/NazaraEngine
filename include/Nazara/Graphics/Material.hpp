@@ -24,6 +24,7 @@
 #include <Nazara/Renderer/Texture.hpp>
 #include <Nazara/Renderer/TextureSampler.hpp>
 #include <Nazara/Renderer/UberShader.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -42,13 +43,13 @@ namespace Nz
 
 	class Material;
 
-	using MaterialConstRef = ObjectRef<const Material>;
+	using MaterialConstRef = std::shared_ptr<const Material>;
 	using MaterialLibrary = ObjectLibrary<Material>;
 	using MaterialLoader = ResourceLoader<Material, MaterialParams>;
 	using MaterialManager = ResourceManager<Material, MaterialParams>;
-	using MaterialRef = ObjectRef<Material>;
+	using MaterialRef = std::shared_ptr<Material>;
 
-	class NAZARA_GRAPHICS_API Material : public RefCounted, public Resource
+	class NAZARA_GRAPHICS_API Material : public Resource
 	{
 		friend MaterialLibrary;
 		friend MaterialLoader;
@@ -200,7 +201,7 @@ namespace Nz
 			Color m_diffuseColor;
 			Color m_specularColor;
 			MaterialRef m_depthMaterial; //< Materialception
-			mutable const MaterialPipeline* m_pipeline;
+			mutable MaterialPipelineConstRef m_pipeline;
 			MaterialPipelineInfo m_pipelineInfo;
 			ReflectionMode m_reflectionMode;
 			TextureSampler m_diffuseSampler;

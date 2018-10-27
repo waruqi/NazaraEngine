@@ -27,9 +27,9 @@ namespace Ndk
 				{
 					ResetMaterials(1);
 
-					m_meshData.indexBuffer = m_indexBuffer;
+					m_meshData.indexBuffer = m_indexBuffer.get();
 					m_meshData.primitiveMode = Nz::PrimitiveMode_LineList;
-					m_meshData.vertexBuffer = m_vertexBuffer;
+					m_meshData.vertexBuffer = m_vertexBuffer.get();
 				}
 
 				void UpdateBoundingVolume(InstanceData* /*instanceData*/) const override
@@ -73,7 +73,7 @@ namespace Ndk
 						transformMatrix.SetScale(box.GetLengths());
 						transformMatrix.SetTranslation(box.GetCenter());
 
-						renderQueue->AddMesh(0, mat, m_meshData, Nz::Boxf::Zero(), transformMatrix, scissorRect);
+						renderQueue->AddMesh(0, mat.get(), m_meshData, Nz::Boxf::Zero(), transformMatrix, scissorRect);
 					};
 
 					DrawBox(entityGfx.GetAABB(), m_globalMaterial);
@@ -119,7 +119,7 @@ namespace Ndk
 						boxMatrix.SetTranslation(box.GetCenter());
 						boxMatrix.ConcatenateAffine(transformMatrix);
 
-						renderQueue->AddMesh(0, m_material, m_meshData, Nz::Boxf::Zero(), boxMatrix, scissorRect);
+						renderQueue->AddMesh(0, m_material.get(), m_meshData, Nz::Boxf::Zero(), boxMatrix, scissorRect);
 					};
 
 					for (std::size_t i = 0; i < entityGfx.GetAttachedRenderableCount(); ++i)
@@ -233,11 +233,7 @@ namespace Ndk
 
 						Nz::InstancedRenderableRef renderable = GenerateCollision3DMesh(entity);
 						if (renderable)
-						{
-							renderable->SetPersistent(false);
-
 							entityGfx.Attach(renderable, Nz::Matrix4f::Translate(obb.GetCenter() - entityNode.GetPosition()), DebugDrawOrder);
-						}
 
 						entityDebug.UpdateDebugRenderable(option, std::move(renderable));
 						break;
@@ -247,9 +243,7 @@ namespace Ndk
 					{
 						auto indexVertexBuffers = GetBoxMesh();
 
-						Nz::InstancedRenderableRef renderable = new AABBDebugRenderable(entity, GetGlobalAABBMaterial(), GetLocalAABBMaterial(), indexVertexBuffers.first, indexVertexBuffers.second);
-						renderable->SetPersistent(false);
-
+						Nz::InstancedRenderableRef renderable = std::make_shared<AABBDebugRenderable>(entity, GetGlobalAABBMaterial(), GetLocalAABBMaterial(), indexVertexBuffers.first, indexVertexBuffers.second);
 						entityGfx.Attach(renderable, Nz::Matrix4f::Identity(), DebugDrawOrder);
 
 						entityDebug.UpdateDebugRenderable(option, std::move(renderable));
@@ -260,9 +254,7 @@ namespace Ndk
 					{
 						auto indexVertexBuffers = GetBoxMesh();
 
-						Nz::InstancedRenderableRef renderable = new OBBDebugRenderable(entity, GetOBBMaterial(), indexVertexBuffers.first, indexVertexBuffers.second);
-						renderable->SetPersistent(false);
-
+						Nz::InstancedRenderableRef renderable = std::make_shared<OBBDebugRenderable>(entity, GetOBBMaterial(), indexVertexBuffers.first, indexVertexBuffers.second);
 						entityGfx.Attach(renderable, Nz::Matrix4f::Identity(), DebugDrawOrder);
 
 						entityDebug.UpdateDebugRenderable(option, std::move(renderable));
@@ -280,7 +272,7 @@ namespace Ndk
 		{
 			DebugDraw option = static_cast<DebugDraw>(i);
 			if (flagsToDisable & option)
-				entityGfx.Detach(entityDebug.GetDebugRenderable(option));
+				entityGfx.Detach(entityDebug.GetDebugRenderable(option).get());
 		}
 
 		entityDebug.UpdateEnabledFlags(flags);

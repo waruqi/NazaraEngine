@@ -8,6 +8,7 @@
 #include <Nazara/Utility/FontGlyph.hpp>
 #include <Nazara/Utility/GuillotineImageAtlas.hpp>
 #include <Nazara/Utility/Debug.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -581,7 +582,7 @@ namespace Nz
 			return false;
 		}
 
-		s_defaultAtlas.reset(new GuillotineImageAtlas);
+		s_defaultAtlas = std::make_shared<GuillotineImageAtlas>();
 		s_defaultGlyphBorder = 1;
 		s_defaultMinimumStepSize = 1;
 
@@ -591,7 +592,7 @@ namespace Nz
 	void Font::Uninitialize()
 	{
 		s_defaultAtlas.reset();
-		s_defaultFont.Reset();
+		s_defaultFont.reset();
 		FontLibrary::Uninitialize();
 	}
 

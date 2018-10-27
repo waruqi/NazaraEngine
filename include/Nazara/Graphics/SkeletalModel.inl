@@ -17,10 +17,7 @@ namespace Nz
 	template<typename... Args>
 	SkeletalModelRef SkeletalModel::New(Args&&... args)
 	{
-		std::unique_ptr<SkeletalModel> object(new SkeletalModel(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<SkeletalModel>(std::forward<Args>(args)...);
 	}
 }
 

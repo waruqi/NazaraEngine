@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2017 Jérôme Leclercq
+// Copyright (C) 2017 Jérôme Leclercq
 // This file is part of the "Nazara Engine - Utility module"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
@@ -20,7 +20,6 @@ namespace Nz
 	}
 
 	VertexDeclaration::VertexDeclaration(const VertexDeclaration& declaration) :
-	RefCounted(),
 	m_components(declaration.m_components),
 	m_stride(declaration.m_stride)
 	{
@@ -147,7 +146,7 @@ namespace Nz
 		return *this;
 	}
 
-	VertexDeclaration* VertexDeclaration::Get(VertexLayout layout)
+	const VertexDeclarationRef& VertexDeclaration::Get(VertexLayout layout)
 	{
 		NazaraAssert(layout <= VertexLayout_Max, "Vertex layout out of enum");
 

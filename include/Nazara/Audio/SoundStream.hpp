@@ -14,6 +14,7 @@
 #include <Nazara/Core/Resource.hpp>
 #include <Nazara/Core/ResourceLoader.hpp>
 #include <Nazara/Core/ResourceParameters.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -26,10 +27,11 @@ namespace Nz
 
 	class SoundStream;
 
+	using SoundStreamConstRef = std::shared_ptr<const SoundStream>;
 	using SoundStreamLoader = ResourceLoader<SoundStream, SoundStreamParams>;
-	using SoundStreamRef = Nz::ObjectRef<SoundStream>;
+	using SoundStreamRef = std::shared_ptr<SoundStream>;
 
-	class NAZARA_AUDIO_API SoundStream : public RefCounted, public Resource
+	class NAZARA_AUDIO_API SoundStream : public Resource
 	{
 		friend SoundStreamLoader;
 

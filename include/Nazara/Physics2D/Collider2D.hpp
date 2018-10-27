@@ -16,6 +16,7 @@
 #include <Nazara/Math/Vector2.hpp>
 #include <Nazara/Physics2D/Config.hpp>
 #include <Nazara/Physics2D/Enums.hpp>
+#include <memory>
 #include <vector>
 
 struct cpShape;
@@ -25,11 +26,11 @@ namespace Nz
 	class Collider2D;
 	class RigidBody2D;
 
-	using Collider2DConstRef = ObjectRef<const Collider2D>;
+	using Collider2DConstRef = std::shared_ptr<const Collider2D>;
 	using Collider2DLibrary = ObjectLibrary<Collider2D>;
-	using Collider2DRef = ObjectRef<Collider2D>;
+	using Collider2DRef = std::shared_ptr<Collider2D>;
 
-	class NAZARA_PHYSICS2D_API Collider2D : public RefCounted
+	class NAZARA_PHYSICS2D_API Collider2D
 	{
 		friend Collider2DLibrary;
 		friend RigidBody2D;
@@ -90,8 +91,8 @@ namespace Nz
 
 	class BoxCollider2D;
 
-	using BoxCollider2DConstRef = ObjectRef<const BoxCollider2D>;
-	using BoxCollider2DRef = ObjectRef<BoxCollider2D>;
+	using BoxCollider2DConstRef = std::shared_ptr<const BoxCollider2D>;
+	using BoxCollider2DRef = std::shared_ptr<BoxCollider2D>;
 
 	class NAZARA_PHYSICS2D_API BoxCollider2D : public Collider2D
 	{
@@ -117,8 +118,8 @@ namespace Nz
 
 	class CircleCollider2D;
 
-	using CircleCollider2DConstRef = ObjectRef<const CircleCollider2D>;
-	using CircleCollider2DRef = ObjectRef<CircleCollider2D>;
+	using CircleCollider2DConstRef = std::shared_ptr<const CircleCollider2D>;
+	using CircleCollider2DRef = std::shared_ptr<CircleCollider2D>;
 
 	class NAZARA_PHYSICS2D_API CircleCollider2D : public Collider2D
 	{
@@ -142,8 +143,8 @@ namespace Nz
 
 	class CompoundCollider2D;
 
-	using CompoundCollider2DConstRef = ObjectRef<const CompoundCollider2D>;
-	using CompoundCollider2DRef = ObjectRef<CompoundCollider2D>;
+	using CompoundCollider2DConstRef = std::shared_ptr<const CompoundCollider2D>;
+	using CompoundCollider2DRef = std::shared_ptr<CompoundCollider2D>;
 
 	class NAZARA_PHYSICS2D_API CompoundCollider2D : public Collider2D
 	{
@@ -171,8 +172,8 @@ namespace Nz
 
 	class ConvexCollider2D;
 
-	using ConvexCollider2DConstRef = ObjectRef<const ConvexCollider2D>;
-	using ConvexCollider2DRef = ObjectRef<ConvexCollider2D>;
+	using ConvexCollider2DConstRef = std::shared_ptr<const ConvexCollider2D>;
+	using ConvexCollider2DRef = std::shared_ptr<ConvexCollider2D>;
 
 	class NAZARA_PHYSICS2D_API ConvexCollider2D : public Collider2D
 	{
@@ -195,8 +196,8 @@ namespace Nz
 
 	class NullCollider2D;
 
-	using NullCollider2DConstRef = ObjectRef<const NullCollider2D>;
-	using NullCollider2DRef = ObjectRef<NullCollider2D>;
+	using NullCollider2DConstRef = std::shared_ptr<const NullCollider2D>;
+	using NullCollider2DRef = std::shared_ptr<NullCollider2D>;
 
 	class NAZARA_PHYSICS2D_API NullCollider2D : public Collider2D
 	{
@@ -215,8 +216,8 @@ namespace Nz
 
 	class SegmentCollider2D;
 
-	using SegmentCollider2DConstRef = ObjectRef<const SegmentCollider2D>;
-	using SegmentCollider2DRef = ObjectRef<SegmentCollider2D>;
+	using SegmentCollider2DConstRef = std::shared_ptr<const SegmentCollider2D>;
+	using SegmentCollider2DRef = std::shared_ptr<SegmentCollider2D>;
 
 	class NAZARA_PHYSICS2D_API SegmentCollider2D : public Collider2D
 	{

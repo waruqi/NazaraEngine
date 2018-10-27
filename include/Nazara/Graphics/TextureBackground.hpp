@@ -16,8 +16,8 @@ namespace Nz
 {
 	class TextureBackground;
 
-	using TextureBackgroundConstRef = ObjectRef<const TextureBackground>;
-	using TextureBackgroundRef = ObjectRef<TextureBackground>;
+	using TextureBackgroundConstRef = std::shared_ptr<const TextureBackground>;
+	using TextureBackgroundRef = std::shared_ptr<TextureBackground>;
 
 	class NAZARA_GRAPHICS_API TextureBackground : public AbstractBackground
 	{

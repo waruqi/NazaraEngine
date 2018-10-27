@@ -42,7 +42,7 @@ namespace Nz
 			return Ternary_Unknown;
 		}
 
-		bool ParseMTL(Mesh* mesh, const String& filePath, const String* materials, const OBJParser::Mesh* meshes, UInt32 meshCount)
+		bool ParseMTL(const MeshRef& mesh, const String& filePath, const String* materials, const OBJParser::Mesh* meshes, UInt32 meshCount)
 		{
 			File file(filePath);
 			if (!file.Open(OpenMode_ReadOnly | OpenMode_Text))
@@ -254,7 +254,7 @@ namespace Nz
 				VertexBufferRef vertexBuffer = VertexBuffer::New(parameters.vertexDeclaration, UInt32(vertexCount), parameters.storage, parameters.vertexBufferFlags);
 
 				// Remplissage des indices
-				IndexMapper indexMapper(indexBuffer, BufferAccess_WriteOnly);
+				IndexMapper indexMapper(indexBuffer.get(), BufferAccess_WriteOnly);
 				for (std::size_t j = 0; j < indices.size(); ++j)
 					indexMapper.Set(j, indices[j]);
 
@@ -273,7 +273,7 @@ namespace Nz
 				bool hasNormals = true;
 				bool hasTexCoords = true;
 
-				VertexMapper vertexMapper(vertexBuffer, BufferAccess_DiscardAndWrite);
+				VertexMapper vertexMapper(vertexBuffer.get(), BufferAccess_DiscardAndWrite);
 
 				auto normalPtr = vertexMapper.GetComponentPtr<Vector3f>(VertexComponent_Normal);
 				auto posPtr = vertexMapper.GetComponentPtr<Vector3f>(VertexComponent_Position);

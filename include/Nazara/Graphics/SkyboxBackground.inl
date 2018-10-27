@@ -118,10 +118,7 @@ namespace Nz
 	template<typename... Args>
 	SkyboxBackgroundRef SkyboxBackground::New(Args&&... args)
 	{
-		std::unique_ptr<SkyboxBackground> object(new SkyboxBackground(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<SkyboxBackground>(std::forward<Args>(args)...);
 	}
 }
 

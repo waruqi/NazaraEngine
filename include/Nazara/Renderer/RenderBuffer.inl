@@ -10,10 +10,7 @@ namespace Nz
 	template<typename... Args>
 	RenderBufferRef RenderBuffer::New(Args&&... args)
 	{
-		std::unique_ptr<RenderBuffer> object(new RenderBuffer(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<RenderBuffer>(std::forward<Args>(args)...);
 	}
 }
 

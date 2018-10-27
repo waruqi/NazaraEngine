@@ -10,10 +10,7 @@ namespace Nz
 	template<typename... Args>
 	FontRef Font::New(Args&&... args)
 	{
-		std::unique_ptr<Font> object(new Font(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Font>(std::forward<Args>(args)...);
 	}
 }
 

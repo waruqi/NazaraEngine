@@ -278,10 +278,10 @@ namespace Nz
 
 	void RigidBody3D::SetGeom(Collider3DRef geom)
 	{
-		if (m_geom.Get() != geom)
+		if (m_geom != geom)
 		{
 			if (geom)
-				m_geom = geom;
+				m_geom = std::move(geom);
 			else
 				m_geom = NullCollider3D::New();
 

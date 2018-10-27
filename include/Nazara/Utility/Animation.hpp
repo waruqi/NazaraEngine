@@ -20,6 +20,7 @@
 #include <Nazara/Core/String.hpp>
 #include <Nazara/Utility/Config.hpp>
 #include <Nazara/Utility/Enums.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -38,15 +39,15 @@ namespace Nz
 	struct SequenceJoint;
 	class Skeleton;
 
-	using AnimationConstRef = ObjectRef<const Animation>;
+	using AnimationConstRef = std::shared_ptr<const Animation>;
 	using AnimationLibrary = ObjectLibrary<Animation>;
 	using AnimationLoader = ResourceLoader<Animation, AnimationParams>;
 	using AnimationManager = ResourceManager<Animation, AnimationParams>;
-	using AnimationRef = ObjectRef<Animation>;
+	using AnimationRef = std::shared_ptr<Animation>;
 
 	struct AnimationImpl;
 
-	class NAZARA_UTILITY_API Animation : public RefCounted, public Resource
+	class NAZARA_UTILITY_API Animation : public Resource
 	{
 		friend AnimationLibrary;
 		friend AnimationLoader;

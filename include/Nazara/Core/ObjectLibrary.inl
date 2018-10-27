@@ -32,9 +32,9 @@ namespace Nz
 	* \remark Produces a NazaraError if object not found
 	*/
 	template<typename Type>
-	ObjectRef<Type> ObjectLibrary<Type>::Get(const String& name)
+	std::shared_ptr<Type> ObjectLibrary<Type>::Get(const String& name)
 	{
-		ObjectRef<Type> ref = Query(name);
+		std::shared_ptr<Type> ref = Query(name);
 		if (!ref)
 			NazaraError("Object \"" + name + "\" is not present");
 
@@ -58,9 +58,9 @@ namespace Nz
 	* \param object Object to stock
 	*/
 	template<typename Type>
-	void ObjectLibrary<Type>::Register(const String& name, ObjectRef<Type> object)
+	void ObjectLibrary<Type>::Register(const String& name, std::shared_ptr<Type> object)
 	{
-		Type::s_library.emplace(name, object);
+		Type::s_library.emplace(name, std::move(object));
 	}
 
 	/*!
@@ -70,7 +70,7 @@ namespace Nz
 	* \param name Name of the object
 	*/
 	template<typename Type>
-	ObjectRef<Type> ObjectLibrary<Type>::Query(const String& name)
+	std::shared_ptr<Type> ObjectLibrary<Type>::Query(const String& name)
 	{
 		auto it = Type::s_library.find(name);
 		if (it != Type::s_library.end())

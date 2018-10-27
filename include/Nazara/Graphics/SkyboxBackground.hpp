@@ -17,8 +17,8 @@ namespace Nz
 	class AbstractViewer;
 	class SkyboxBackground;
 
-	using SkyboxBackgroundConstRef = ObjectRef<const SkyboxBackground>;
-	using SkyboxBackgroundRef = ObjectRef<SkyboxBackground>;
+	using SkyboxBackgroundConstRef = std::shared_ptr<const SkyboxBackground>;
+	using SkyboxBackgroundRef = std::shared_ptr<SkyboxBackground>;
 
 	class NAZARA_GRAPHICS_API SkyboxBackground : public AbstractBackground
 	{

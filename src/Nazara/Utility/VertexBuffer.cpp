@@ -28,7 +28,6 @@ namespace Nz
 	}
 
 	VertexBuffer::VertexBuffer(const VertexBuffer& vertexBuffer) :
-	RefCounted(),
 	m_buffer(vertexBuffer.m_buffer),
 	m_endOffset(vertexBuffer.m_endOffset),
 	m_startOffset(vertexBuffer.m_startOffset),
@@ -91,8 +90,8 @@ namespace Nz
 
 	void VertexBuffer::Reset()
 	{
-		m_buffer.Reset();
-		m_vertexDeclaration.Reset();
+		m_buffer.reset();
+		m_vertexDeclaration.reset();
 	}
 
 	void VertexBuffer::Reset(VertexDeclarationConstRef vertexDeclaration, BufferRef buffer)

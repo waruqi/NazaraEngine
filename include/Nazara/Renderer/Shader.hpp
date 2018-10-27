@@ -20,6 +20,7 @@
 #include <Nazara/Math/Vector4.hpp>
 #include <Nazara/Renderer/Config.hpp>
 #include <Nazara/Renderer/Enums.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -27,11 +28,11 @@ namespace Nz
 	class Shader;
 	class ShaderStage;
 
-	using ShaderConstRef = ObjectRef<const Shader>;
+	using ShaderConstRef = std::shared_ptr<const Shader>;
 	using ShaderLibrary = ObjectLibrary<Shader>;
-	using ShaderRef = ObjectRef<Shader>;
+	using ShaderRef = std::shared_ptr<Shader>;
 
-	class NAZARA_RENDERER_API Shader : public RefCounted
+	class NAZARA_RENDERER_API Shader
 	{
 		friend ShaderLibrary;
 		friend class Renderer;

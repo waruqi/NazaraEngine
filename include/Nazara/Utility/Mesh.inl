@@ -25,10 +25,7 @@ namespace Nz
 	template<typename... Args>
 	MeshRef Mesh::New(Args&&... args)
 	{
-		std::unique_ptr<Mesh> object(new Mesh(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Mesh>(std::forward<Args>(args)...);
 	}
 }
 

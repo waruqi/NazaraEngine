@@ -16,8 +16,8 @@ namespace Nz
 {
 	class ColorBackground;
 
-	using ColorBackgroundConstRef = ObjectRef<const ColorBackground>;
-	using ColorBackgroundRef = ObjectRef<ColorBackground>;
+	using ColorBackgroundConstRef = std::shared_ptr<const ColorBackground>;
+	using ColorBackgroundRef = std::shared_ptr<ColorBackground>;
 
 	class NAZARA_GRAPHICS_API ColorBackground : public AbstractBackground
 	{

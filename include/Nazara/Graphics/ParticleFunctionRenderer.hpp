@@ -15,8 +15,8 @@ namespace Nz
 {
 	class ParticleFunctionRenderer;
 
-	using ParticleFunctionRendererConstRef = ObjectRef<const ParticleFunctionRenderer>;
-	using ParticleFunctionRendererRef = ObjectRef<ParticleFunctionRenderer>;
+	using ParticleFunctionRendererConstRef = std::shared_ptr<const ParticleFunctionRenderer>;
+	using ParticleFunctionRendererRef = std::shared_ptr<ParticleFunctionRenderer>;
 
 	class NAZARA_GRAPHICS_API ParticleFunctionRenderer : public ParticleRenderer
 	{

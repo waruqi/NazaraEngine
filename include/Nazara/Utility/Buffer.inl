@@ -45,10 +45,7 @@ namespace Nz
 	template<typename... Args>
 	BufferRef Buffer::New(Args&&... args)
 	{
-		std::unique_ptr<Buffer> object(new Buffer(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Buffer>(std::forward<Args>(args)...);
 	}
 }
 

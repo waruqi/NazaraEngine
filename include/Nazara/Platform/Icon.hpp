@@ -10,6 +10,7 @@
 #include <Nazara/Prerequisites.hpp>
 #include <Nazara/Core/ObjectRef.hpp>
 #include <Nazara/Platform/Config.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -18,9 +19,10 @@ namespace Nz
 
 	class Icon;
 
-	using IconRef = ObjectRef<Icon>;
+	using IconConstRef = std::shared_ptr<const Icon>;
+	using IconRef = std::shared_ptr<Icon>;
 
-	class NAZARA_PLATFORM_API Icon : public RefCounted
+	class NAZARA_PLATFORM_API Icon
 	{
 		friend class WindowImpl;
 

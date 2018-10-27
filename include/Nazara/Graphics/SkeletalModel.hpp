@@ -26,9 +26,10 @@ namespace Nz
 
 	class SkeletalModel;
 
-	using SkeletalModelRef = ObjectRef<SkeletalModel>;
+	using SkeletalModelConstRef = std::shared_ptr<const SkeletalModel>;
+	using SkeletalModelRef = std::shared_ptr<SkeletalModel>;
 
-	class NAZARA_GRAPHICS_API SkeletalModel : public Model, Updatable
+	class NAZARA_GRAPHICS_API SkeletalModel : public Model
 	{
 		public:
 			SkeletalModel();
@@ -44,17 +45,17 @@ namespace Nz
 
 			void EnableAnimation(bool animation);
 
-			Animation* GetAnimation() const;
-			Skeleton* GetSkeleton();
-			const Skeleton* GetSkeleton() const;
+			const AnimationRef& GetAnimation() const;
+			Skeleton& GetSkeleton();
+			const Skeleton& GetSkeleton() const;
 
 			bool HasAnimation() const;
 
 			bool IsAnimated() const override;
 			bool IsAnimationEnabled() const;
 
-			bool SetAnimation(Animation* animation);
-			void SetMesh(Mesh* mesh) override;
+			bool SetAnimation(AnimationRef animation);
+			void SetMesh(MeshRef mesh) override;
 			bool SetSequence(const String& sequenceName);
 			void SetSequence(unsigned int sequenceIndex);
 
@@ -65,9 +66,6 @@ namespace Nz
 
 		private:
 			void MakeBoundingVolume() const override;
-			/*void Register() override;
-			void Unregister() override;*/
-			void Update() override;
 
 			AnimationRef m_animation;
 			Skeleton m_skeleton;

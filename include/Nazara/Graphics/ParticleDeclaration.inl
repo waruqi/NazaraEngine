@@ -10,10 +10,7 @@ namespace Nz
 	template<typename... Args>
 	ParticleDeclarationRef ParticleDeclaration::New(Args&&... args)
 	{
-		std::unique_ptr<ParticleDeclaration> object(new ParticleDeclaration(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ParticleDeclaration>(std::forward<Args>(args)...);
 	}
 }
 

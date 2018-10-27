@@ -16,9 +16,9 @@ namespace Nz
 {
 	class TileMap;
 
-	using TileMapConstRef = ObjectRef<const TileMap>;
+	using TileMapConstRef = std::shared_ptr<const TileMap>;
 	using TileMapLibrary = ObjectLibrary<TileMap>;
-	using TileMapRef = ObjectRef<TileMap>;
+	using TileMapRef = std::shared_ptr<TileMap>;
 
 	class NAZARA_GRAPHICS_API TileMap : public InstancedRenderable
 	{

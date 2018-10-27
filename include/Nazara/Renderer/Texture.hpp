@@ -22,10 +22,10 @@ namespace Nz
 {
 	class Texture;
 
-	using TextureConstRef = ObjectRef<const Texture>;
+	using TextureConstRef = std::shared_ptr<const Texture>;
 	using TextureLibrary = ObjectLibrary<Texture>;
 	using TextureManager = ResourceManager<Texture, ImageParams>;
-	using TextureRef = ObjectRef<Texture>;
+	using TextureRef = std::shared_ptr<Texture>;
 
 	struct TextureImpl;
 

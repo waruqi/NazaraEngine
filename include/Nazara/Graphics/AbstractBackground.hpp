@@ -12,17 +12,18 @@
 #include <Nazara/Core/ObjectRef.hpp>
 #include <Nazara/Graphics/Config.hpp>
 #include <Nazara/Graphics/Enums.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class AbstractBackground;
 	class AbstractViewer;
 
-	using BackgroundConstRef = ObjectRef<const AbstractBackground>;
+	using BackgroundConstRef = std::shared_ptr<const AbstractBackground>;
 	using BackgroundLibrary = ObjectLibrary<AbstractBackground>;
-	using BackgroundRef = ObjectRef<AbstractBackground>;
+	using BackgroundRef = std::shared_ptr<AbstractBackground>;
 
-	class NAZARA_GRAPHICS_API AbstractBackground : public RefCounted
+	class NAZARA_GRAPHICS_API AbstractBackground
 	{
 		public:
 			AbstractBackground() = default;

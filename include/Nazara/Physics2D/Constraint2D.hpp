@@ -13,6 +13,7 @@
 #include <Nazara/Physics2D/Config.hpp>
 #include <Nazara/Physics2D/PhysWorld2D.hpp>
 #include <Nazara/Physics2D/RigidBody2D.hpp>
+#include <memory>
 #include <vector>
 
 struct cpConstraint;
@@ -21,11 +22,11 @@ namespace Nz
 {
 	class Constraint2D;
 
-	using Constraint2DConstRef = ObjectRef<const Constraint2D>;
+	using Constraint2DConstRef = std::shared_ptr<const Constraint2D>;
 	using Constraint2DLibrary = ObjectLibrary<Constraint2D>;
-	using Constraint2DRef = ObjectRef<Constraint2D>;
+	using Constraint2DRef = std::shared_ptr<Constraint2D>;
 
-	class NAZARA_PHYSICS2D_API Constraint2D : public RefCounted
+	class NAZARA_PHYSICS2D_API Constraint2D
 	{
 		public:
 			Constraint2D(const Constraint2D&) = delete;
@@ -64,8 +65,8 @@ namespace Nz
 
 	class DampedSpringConstraint2D;
 
-	using DampedSpringConstraint2DConstRef = ObjectRef<const DampedSpringConstraint2D>;
-	using DampedSpringConstraint2DRef = ObjectRef<DampedSpringConstraint2D>;
+	using DampedSpringConstraint2DConstRef = std::shared_ptr<const DampedSpringConstraint2D>;
+	using DampedSpringConstraint2DRef = std::shared_ptr<DampedSpringConstraint2D>;
 	
 	class NAZARA_PHYSICS2D_API DampedSpringConstraint2D : public Constraint2D
 	{
@@ -90,8 +91,8 @@ namespace Nz
 
 	class DampedRotarySpringConstraint2D;
 
-	using DampedRotarySpringConstraint2DConstRef = ObjectRef<const DampedRotarySpringConstraint2D>;
-	using DampedRotarySpringConstraint2DRef = ObjectRef<DampedRotarySpringConstraint2D>;
+	using DampedRotarySpringConstraint2DConstRef = std::shared_ptr<const DampedRotarySpringConstraint2D>;
+	using DampedRotarySpringConstraint2DRef = std::shared_ptr<DampedRotarySpringConstraint2D>;
 
 	class NAZARA_PHYSICS2D_API DampedRotarySpringConstraint2D : public Constraint2D
 	{
@@ -112,8 +113,8 @@ namespace Nz
 
 	class GearConstraint2D;
 
-	using GearConstraint2DConstRef = ObjectRef<const GearConstraint2D>;
-	using GearConstraint2DRef = ObjectRef<GearConstraint2D>;
+	using GearConstraint2DConstRef = std::shared_ptr<const GearConstraint2D>;
+	using GearConstraint2DRef = std::shared_ptr<GearConstraint2D>;
 	
 	class NAZARA_PHYSICS2D_API GearConstraint2D : public Constraint2D
 	{
@@ -132,8 +133,8 @@ namespace Nz
 
 	class MotorConstraint2D;
 
-	using MotorConstraint2DConstRef = ObjectRef<const MotorConstraint2D>;
-	using MotorConstraint2DRef = ObjectRef<MotorConstraint2D>;
+	using MotorConstraint2DConstRef = std::shared_ptr<const MotorConstraint2D>;
+	using MotorConstraint2DRef = std::shared_ptr<MotorConstraint2D>;
 	
 	class NAZARA_PHYSICS2D_API MotorConstraint2D : public Constraint2D
 	{
@@ -149,8 +150,8 @@ namespace Nz
 
 	class PinConstraint2D;
 
-	using PinConstraint2DConstRef = ObjectRef<const PinConstraint2D>;
-	using PinConstraint2DRef = ObjectRef<PinConstraint2D>;
+	using PinConstraint2DConstRef = std::shared_ptr<const PinConstraint2D>;
+	using PinConstraint2DRef = std::shared_ptr<PinConstraint2D>;
 
 	class NAZARA_PHYSICS2D_API PinConstraint2D : public Constraint2D
 	{
@@ -171,8 +172,8 @@ namespace Nz
 
 	class PivotConstraint2D;
 
-	using PivotConstraint2DConstRef = ObjectRef<const PivotConstraint2D>;
-	using PivotConstraint2DRef = ObjectRef<PivotConstraint2D>;
+	using PivotConstraint2DConstRef = std::shared_ptr<const PivotConstraint2D>;
+	using PivotConstraint2DRef = std::shared_ptr<PivotConstraint2D>;
 	
 	class NAZARA_PHYSICS2D_API PivotConstraint2D : public Constraint2D
 	{
@@ -192,8 +193,8 @@ namespace Nz
 
 	class RatchetConstraint2D;
 
-	using RatchetConstraint2DConstRef = ObjectRef<const RatchetConstraint2D>;
-	using RatchetConstraint2DRef = ObjectRef<RatchetConstraint2D>;
+	using RatchetConstraint2DConstRef = std::shared_ptr<const RatchetConstraint2D>;
+	using RatchetConstraint2DRef = std::shared_ptr<RatchetConstraint2D>;
 	
 	class NAZARA_PHYSICS2D_API RatchetConstraint2D : public Constraint2D
 	{
@@ -214,8 +215,8 @@ namespace Nz
 
 	class RotaryLimitConstraint2D;
 
-	using RotaryLimitConstraint2DConstRef = ObjectRef<const RotaryLimitConstraint2D>;
-	using RotaryLimitConstraint2DRef = ObjectRef<RotaryLimitConstraint2D>;
+	using RotaryLimitConstraint2DConstRef = std::shared_ptr<const RotaryLimitConstraint2D>;
+	using RotaryLimitConstraint2DRef = std::shared_ptr<RotaryLimitConstraint2D>;
 
 	class NAZARA_PHYSICS2D_API RotaryLimitConstraint2D : public Constraint2D
 	{
@@ -234,8 +235,8 @@ namespace Nz
 
 	class SlideConstraint2D;
 
-	using SlideConstraint2DConstRef = ObjectRef<const SlideConstraint2D>;
-	using SlideConstraint2DRef = ObjectRef<SlideConstraint2D>;
+	using SlideConstraint2DConstRef = std::shared_ptr<const SlideConstraint2D>;
+	using SlideConstraint2DRef = std::shared_ptr<SlideConstraint2D>;
 
 	class NAZARA_PHYSICS2D_API SlideConstraint2D : public Constraint2D
 	{

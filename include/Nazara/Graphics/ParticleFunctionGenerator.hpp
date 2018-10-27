@@ -15,8 +15,8 @@ namespace Nz
 {
 	class ParticleFunctionGenerator;
 
-	using ParticleFunctionGeneratorConstRef = ObjectRef<const ParticleFunctionGenerator>;
-	using ParticleFunctionGeneratorRef = ObjectRef<ParticleFunctionGenerator>;
+	using ParticleFunctionGeneratorConstRef = std::shared_ptr<const ParticleFunctionGenerator>;
+	using ParticleFunctionGeneratorRef = std::shared_ptr<ParticleFunctionGenerator>;
 
 	class NAZARA_GRAPHICS_API ParticleFunctionGenerator : public ParticleGenerator
 	{

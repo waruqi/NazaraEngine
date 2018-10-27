@@ -206,7 +206,7 @@ namespace Nz
 	* \remark Produces a NazaraError with NAZARA_GRAPHICS_SAFE defined if mesh is invalid
 	*/
 
-	void Model::SetMesh(Mesh* mesh)
+	void Model::SetMesh(MeshRef mesh)
 	{
 		#if NAZARA_GRAPHICS_SAFE
 		if (mesh && !mesh->IsValid())
@@ -216,11 +216,11 @@ namespace Nz
 		}
 		#endif
 
-		m_mesh = mesh;
+		m_mesh = std::move(mesh);
 
 		if (m_mesh)
 		{
-			ResetMaterials(mesh->GetMaterialCount());
+			ResetMaterials(m_mesh->GetMaterialCount());
 			m_meshAABBInvalidationSlot.Connect(m_mesh->OnMeshInvalidateAABB, [this](const Nz::Mesh*) { InvalidateBoundingVolume(); });
 		}
 		else

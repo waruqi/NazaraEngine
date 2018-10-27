@@ -15,44 +15,35 @@ namespace Nz
 {
 	class StaticMesh;
 
-	using StaticMeshConstRef = ObjectRef<const StaticMesh>;
-	using StaticMeshRef = ObjectRef<StaticMesh>;
+	using StaticMeshConstRef = std::shared_ptr<const StaticMesh>;
+	using StaticMeshRef = std::shared_ptr<StaticMesh>;
 
 	class NAZARA_UTILITY_API StaticMesh final : public SubMesh
 	{
 		public:
 			StaticMesh(VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer);
-
-			NAZARA_DEPRECATED("StaticMesh constructor taking a mesh is deprecated, submeshes no longer require to be part of a single mesh")
-			StaticMesh(const Mesh* parent);
-
 			~StaticMesh();
 
 			void Center();
-
-			NAZARA_DEPRECATED("StaticMesh create/destroy functions are deprecated, please use constructor")
-			bool Create(VertexBuffer* vertexBuffer);
-			void Destroy();
 
 			bool GenerateAABB();
 
 			const Boxf& GetAABB() const override;
 			AnimationType GetAnimationType() const final override;
-			const IndexBuffer* GetIndexBuffer() const override;
-			VertexBuffer* GetVertexBuffer();
-			const VertexBuffer* GetVertexBuffer() const;
+			const IndexBufferConstRef& GetIndexBuffer() const override;
+			const VertexBufferRef& GetVertexBuffer();
+			const VertexBufferConstRef& GetVertexBuffer() const;
 			unsigned int GetVertexCount() const override;
 
 			bool IsAnimated() const final override;
 			bool IsValid() const;
 
 			void SetAABB(const Boxf& aabb);
-			void SetIndexBuffer(const IndexBuffer* indexBuffer);
+			void SetIndexBuffer(IndexBufferConstRef indexBuffer);
 
 			template<typename... Args> static StaticMeshRef New(Args&&... args);
 
 			// Signals:
-			NazaraSignal(OnStaticMeshDestroy, const StaticMesh* /*staticMesh*/);
 			NazaraSignal(OnStaticMeshRelease, const StaticMesh* /*staticMesh*/);
 
 		private:

@@ -10,10 +10,7 @@ namespace Nz
 	template<typename... Args>
 	ShaderRef Shader::New(Args&&... args)
 	{
-		std::unique_ptr<Shader> object(new Shader(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Shader>(std::forward<Args>(args)...);
 	}
 }
 

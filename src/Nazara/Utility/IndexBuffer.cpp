@@ -31,16 +31,6 @@ namespace Nz
 		Reset(largeIndices, length, storage, usage);
 	}
 
-	IndexBuffer::IndexBuffer(const IndexBuffer& indexBuffer) :
-	RefCounted(),
-	m_buffer(indexBuffer.m_buffer),
-	m_endOffset(indexBuffer.m_endOffset),
-	m_indexCount(indexBuffer.m_indexCount),
-	m_startOffset(indexBuffer.m_startOffset),
-	m_largeIndices(indexBuffer.m_largeIndices)
-	{
-	}
-
 	IndexBuffer::~IndexBuffer()
 	{
 		OnIndexBufferRelease(this);
@@ -93,7 +83,7 @@ namespace Nz
 
 	void IndexBuffer::Reset()
 	{
-		m_buffer.Reset();
+		m_buffer.reset();
 	}
 
 	void IndexBuffer::Reset(bool largeIndices, BufferRef buffer)

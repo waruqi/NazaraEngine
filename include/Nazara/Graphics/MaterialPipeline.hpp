@@ -13,6 +13,7 @@
 #include <Nazara/Renderer/RenderPipeline.hpp>
 #include <Nazara/Renderer/UberShader.hpp>
 #include <array>
+#include <memory>
 
 namespace Nz
 {
@@ -38,11 +39,11 @@ namespace Nz
 
 	class MaterialPipeline;
 
-	using MaterialPipelineConstRef = ObjectRef<const MaterialPipeline>;
+	using MaterialPipelineConstRef = std::shared_ptr<const MaterialPipeline>;
 	using MaterialPipelineLibrary = ObjectLibrary<MaterialPipeline>;
-	using MaterialPipelineRef = ObjectRef<MaterialPipeline>;
+	using MaterialPipelineRef = std::shared_ptr<MaterialPipeline>;
 
-	class NAZARA_GRAPHICS_API MaterialPipeline : public RefCounted
+	class NAZARA_GRAPHICS_API MaterialPipeline
 	{
 		friend class Graphics;
 		friend MaterialPipelineLibrary;

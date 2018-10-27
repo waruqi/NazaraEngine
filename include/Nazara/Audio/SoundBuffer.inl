@@ -17,10 +17,7 @@ namespace Nz
 	template<typename... Args>
 	SoundBufferRef SoundBuffer::New(Args&&... args)
 	{
-		std::unique_ptr<SoundBuffer> object(new SoundBuffer(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<SoundBuffer>(std::forward<Args>(args)...);
 	}
 }
 

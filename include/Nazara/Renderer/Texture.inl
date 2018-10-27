@@ -10,10 +10,7 @@ namespace Nz
 	template<typename... Args>
 	TextureRef Texture::New(Args&&... args)
 	{
-		std::unique_ptr<Texture> object(new Texture(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Texture>(std::forward<Args>(args)...);
 	}
 
 }

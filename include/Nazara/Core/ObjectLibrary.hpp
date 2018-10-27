@@ -25,18 +25,18 @@ namespace Nz
 
 			static void Clear();
 
-			static ObjectRef<Type> Get(const String& name);
+			static std::shared_ptr<Type> Get(const String& name);
 			static bool Has(const String& name);
 
-			static void Register(const String& name, ObjectRef<Type> object);
-			static ObjectRef<Type> Query(const String& name);
+			static void Register(const String& name, std::shared_ptr<Type> object);
+			static std::shared_ptr<Type> Query(const String& name);
 			static void Unregister(const String& name);
 
 		private:
 			static bool Initialize();
 			static void Uninitialize();
 
-			using LibraryMap = std::unordered_map<String, ObjectRef<Type>>;
+			using LibraryMap = std::unordered_map<String, std::shared_ptr<Type>>;
 	};
 }
 

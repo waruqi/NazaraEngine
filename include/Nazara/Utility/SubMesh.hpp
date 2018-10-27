@@ -14,25 +14,22 @@
 #include <Nazara/Utility/Enums.hpp>
 #include <Nazara/Utility/IndexBuffer.hpp>
 #include <Nazara/Utility/VertexBuffer.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class Mesh;
 	class SubMesh;
 
-	using SubMeshConstRef = ObjectRef<const SubMesh>;
-	using SubMeshRef = ObjectRef<SubMesh>;
+	using SubMeshConstRef = std::shared_ptr<const SubMesh>;
+	using SubMeshRef = std::shared_ptr<SubMesh>;
 
-	class NAZARA_UTILITY_API SubMesh : public RefCounted
+	class NAZARA_UTILITY_API SubMesh
 	{
 		friend Mesh;
 
 		public:
 			SubMesh();
-
-			NAZARA_DEPRECATED("Submesh constructor taking a mesh is deprecated, submeshes no longer require to be part of a single mesh")
-			SubMesh(const Mesh* parent);
-
 			SubMesh(const SubMesh&) = delete;
 			SubMesh(SubMesh&&) = delete;
 			virtual ~SubMesh();
@@ -43,7 +40,7 @@ namespace Nz
 
 			virtual const Boxf& GetAABB() const = 0;
 			virtual AnimationType GetAnimationType() const = 0;
-			virtual const IndexBuffer* GetIndexBuffer() const = 0;
+			virtual const IndexBufferConstRef& GetIndexBuffer() const = 0;
 			UInt32 GetMaterialIndex() const;
 			PrimitiveMode GetPrimitiveMode() const;
 			UInt32 GetTriangleCount() const;

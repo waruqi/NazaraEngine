@@ -19,6 +19,7 @@
 #include <Nazara/Core/ResourceManager.hpp>
 #include <Nazara/Core/ResourceParameters.hpp>
 #include <Nazara/Core/Signal.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -32,15 +33,15 @@ namespace Nz
 	class Sound;
 	class SoundBuffer;
 
-	using SoundBufferConstRef = ObjectRef<const SoundBuffer>;
+	using SoundBufferConstRef = std::shared_ptr<const SoundBuffer>;
 	using SoundBufferLibrary = ObjectLibrary<SoundBuffer>;
 	using SoundBufferLoader = ResourceLoader<SoundBuffer, SoundBufferParams>;
 	using SoundBufferManager = ResourceManager<SoundBuffer, SoundBufferParams>;
-	using SoundBufferRef = ObjectRef<SoundBuffer>;
+	using SoundBufferRef = std::shared_ptr<SoundBuffer>;
 
 	struct SoundBufferImpl;
 
-	class NAZARA_AUDIO_API SoundBuffer : public RefCounted, public Resource
+	class NAZARA_AUDIO_API SoundBuffer : public Resource
 	{
 		friend Sound;
 		friend SoundBufferLibrary;

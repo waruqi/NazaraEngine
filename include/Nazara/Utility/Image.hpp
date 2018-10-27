@@ -37,11 +37,11 @@ namespace Nz
 
 	class Image;
 
-	using ImageConstRef = ObjectRef<const Image>;
+	using ImageConstRef = std::shared_ptr<const Image>;
 	using ImageLibrary = ObjectLibrary<Image>;
 	using ImageLoader = ResourceLoader<Image, ImageParams>;
 	using ImageManager = ResourceManager<Image, ImageParams>;
-	using ImageRef = ObjectRef<Image>;
+	using ImageRef = std::shared_ptr<Image>;
 	using ImageSaver = ResourceSaver<Image, ImageParams>;
 
 	class NAZARA_UTILITY_API Image : public AbstractImage, public Resource
@@ -63,7 +63,7 @@ namespace Nz
 
 			bool Convert(PixelFormatType format);
 
-			void Copy(const Image* source, const Boxui& srcBox, const Vector3ui& dstPos);
+			void Copy(const ImageConstRef& source, const Boxui& srcBox, const Vector3ui& dstPos);
 
 			bool Create(ImageType type, PixelFormatType format, unsigned int width, unsigned int height, unsigned int depth = 1, UInt8 levelCount = 1);
 			void Destroy();
@@ -124,13 +124,13 @@ namespace Nz
 
 			// LoadArray
 			static ImageRef LoadArrayFromFile(const String& filePath, const ImageParams& imageParams = ImageParams(), const Vector2ui& atlasSize = Vector2ui(2, 2));
-			static ImageRef LoadArrayFromImage(const Image* image, const Vector2ui& atlasSize = Vector2ui(2, 2));
+			static ImageRef LoadArrayFromImage(const ImageConstRef& image, const Vector2ui& atlasSize = Vector2ui(2, 2));
 			static ImageRef LoadArrayFromMemory(const void* data, std::size_t size, const ImageParams& imageParams = ImageParams(), const Vector2ui& atlasSize = Vector2ui(2, 2));
 			static ImageRef LoadArrayFromStream(Stream& stream, const ImageParams& imageParams = ImageParams(), const Vector2ui& atlasSize = Vector2ui(2, 2));
 
 			// LoadCubemap
 			static ImageRef LoadCubemapFromFile(const String& filePath, const ImageParams& imageParams = ImageParams(), const CubemapParams& cubemapParams = CubemapParams());
-			static ImageRef LoadCubemapFromImage(const Image* image, const CubemapParams& params = CubemapParams());
+			static ImageRef LoadCubemapFromImage(const ImageConstRef& image, const CubemapParams& params = CubemapParams());
 			static ImageRef LoadCubemapFromMemory(const void* data, std::size_t size, const ImageParams& imageParams = ImageParams(), const CubemapParams& cubemapParams = CubemapParams());
 			static ImageRef LoadCubemapFromStream(Stream& stream, const ImageParams& imageParams = ImageParams(), const CubemapParams& cubemapParams = CubemapParams());
 

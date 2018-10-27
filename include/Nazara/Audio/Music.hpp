@@ -25,7 +25,7 @@ namespace Nz
 			Music(Music&&) noexcept = default;
 			~Music();
 
-			bool Create(SoundStream* soundStream);
+			bool Create(SoundStreamRef soundStream);
 			void Destroy();
 
 			void EnableLooping(bool loop) override;

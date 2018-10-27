@@ -23,9 +23,9 @@ namespace Nz
 	*
 	* \param soundBuffer Buffer to read sound from
 	*/
-	Sound::Sound(const SoundBuffer* soundBuffer)
+	Sound::Sound(SoundBufferConstRef soundBuffer)
 	{
-		SetBuffer(soundBuffer);
+		SetBuffer(std::move(soundBuffer));
 	}
 
 	/*!
@@ -66,7 +66,7 @@ namespace Nz
 	* \brief Gets the internal buffer
 	* \return Internal buffer
 	*/
-	const SoundBuffer* Sound::GetBuffer() const
+	const SoundBufferConstRef& Sound::GetBuffer() const
 	{
 		return m_buffer;
 	}
@@ -237,7 +237,7 @@ namespace Nz
 	*
 	* \remark Produces a NazaraError if buffer is invalid with NAZARA_AUDIO_SAFE defined
 	*/
-	void Sound::SetBuffer(const SoundBuffer* buffer)
+	void Sound::SetBuffer(SoundBufferConstRef buffer)
 	{
 		NazaraAssert(m_source != InvalidSource, "Invalid sound emitter");
 		NazaraAssert(!buffer || buffer->IsValid(), "Invalid sound buffer");
@@ -247,7 +247,7 @@ namespace Nz
 
 		Stop();
 
-		m_buffer = buffer;
+		m_buffer = std::move(buffer);
 
 		if (m_buffer)
 			alSourcei(m_source, AL_BUFFER, m_buffer->GetOpenALBuffer());

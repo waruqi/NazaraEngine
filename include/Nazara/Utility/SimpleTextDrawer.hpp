@@ -11,7 +11,6 @@
 #include <Nazara/Core/String.hpp>
 #include <Nazara/Utility/AbstractTextDrawer.hpp>
 #include <Nazara/Utility/Enums.hpp>
-#include <Nazara/Utility/Font.hpp>
 #include <vector>
 
 namespace Nz
@@ -31,8 +30,8 @@ namespace Nz
 			const Recti& GetBounds() const override;
 			unsigned int GetCharacterSize() const;
 			const Color& GetColor() const;
-			Font* GetFont() const;
-			Font* GetFont(std::size_t index) const override;
+			const FontRef& GetFont() const;
+			const FontRef& GetFont(std::size_t index) const override;
 			std::size_t GetFontCount() const override;
 			const Glyph& GetGlyph(std::size_t index) const override;
 			std::size_t GetGlyphCount() const override;
@@ -43,7 +42,7 @@ namespace Nz
 
 			void SetCharacterSize(unsigned int characterSize);
 			void SetColor(const Color& color);
-			void SetFont(Font* font);
+			void SetFont(FontRef font);
 			void SetStyle(UInt32 style);
 			void SetText(const String& str);
 

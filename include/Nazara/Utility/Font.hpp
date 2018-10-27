@@ -31,12 +31,12 @@ namespace Nz
 
 	struct FontGlyph;
 
-	using FontConstRef = ObjectRef<const Font>;
+	using FontConstRef = std::shared_ptr<const Font>;
 	using FontLibrary = ObjectLibrary<Font>;
 	using FontLoader = ResourceLoader<Font, FontParams>;
-	using FontRef = ObjectRef<Font>;
+	using FontRef = std::shared_ptr<Font>;
 
-	class NAZARA_UTILITY_API Font : public RefCounted, public Resource
+	class NAZARA_UTILITY_API Font : public Resource
 	{
 		friend FontLibrary;
 		friend FontLoader;

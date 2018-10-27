@@ -13,6 +13,7 @@
 #include <Nazara/Core/RefCounted.hpp>
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Renderer/Config.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -20,11 +21,11 @@ namespace Nz
 	class UberShader;
 	class UberShaderInstance;
 
-	using UberShaderConstRef = ObjectRef<const UberShader>;
+	using UberShaderConstRef = std::shared_ptr<const UberShader>;
 	using UberShaderLibrary = ObjectLibrary<UberShader>;
-	using UberShaderRef = ObjectRef<UberShader>;
+	using UberShaderRef = std::shared_ptr<UberShader>;
 
-	class NAZARA_RENDERER_API UberShader : public RefCounted
+	class NAZARA_RENDERER_API UberShader
 	{
 		friend UberShaderLibrary;
 		friend class Renderer;

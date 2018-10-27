@@ -5,7 +5,7 @@
 namespace Ndk
 {
 	template<typename T, typename ...Args>
-	Nz::ObjectRef<T> ConstraintComponent2D::CreateConstraint(const Ndk::EntityHandle& first, const Ndk::EntityHandle& second, Args && ...args)
+	std::shared_ptr<T> ConstraintComponent2D::CreateConstraint(const Ndk::EntityHandle& first, const Ndk::EntityHandle& second, Args && ...args)
 	{
 		auto FetchBody = [](const Ndk::EntityHandle& entity) -> Nz::RigidBody2D*
 		{
@@ -23,7 +23,7 @@ namespace Ndk
 		Nz::RigidBody2D* secondBody = FetchBody(second);
 		NazaraAssert(secondBody, "Second entity has no CollisionComponent2D nor PhysicsComponent2D component");
 
-		Nz::ObjectRef<T> constraint = T::New(*firstBody, *secondBody, std::forward<Args>(args)...);
+		std::shared_ptr<T> constraint = T::New(*firstBody, *secondBody, std::forward<Args>(args)...);
 		m_constraints.push_back(constraint);
 
 		return constraint;

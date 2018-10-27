@@ -53,7 +53,7 @@ namespace Nz
 	* \remark Produces a NazaraError if all loaders failed or no loader was found
 	*/
 	template<typename Type, typename Parameters>
-	ObjectRef<Type> ResourceLoader<Type, Parameters>::LoadFromFile(const String& filePath, const Parameters& parameters)
+	std::shared_ptr<Type> ResourceLoader<Type, Parameters>::LoadFromFile(const String& filePath, const Parameters& parameters)
 	{
 		NazaraAssert(parameters.IsValid(), "Invalid parameters");
 
@@ -106,7 +106,7 @@ namespace Nz
 					found = true;
 				}
 
-				ObjectRef<Type> resource = fileLoader(filePath, parameters);
+				std::shared_ptr<Type> resource = fileLoader(filePath, parameters);
 				if (resource)
 				{
 					resource->SetFilePath(filePath);
@@ -125,7 +125,7 @@ namespace Nz
 
 				file.SetCursorPos(0);
 
-				ObjectRef<Type> resource = streamLoader(file, parameters);
+				std::shared_ptr<Type> resource = streamLoader(file, parameters);
 				if (resource)
 				{
 					resource->SetFilePath(filePath);
@@ -161,7 +161,7 @@ namespace Nz
 	* \remark Produces a NazaraError if all loaders failed or no loader was found
 	*/
 	template<typename Type, typename Parameters>
-	ObjectRef<Type> ResourceLoader<Type, Parameters>::LoadFromMemory(const void* data, std::size_t size, const Parameters& parameters)
+	std::shared_ptr<Type> ResourceLoader<Type, Parameters>::LoadFromMemory(const void* data, std::size_t size, const Parameters& parameters)
 	{
 		NazaraAssert(data, "Invalid data pointer");
 		NazaraAssert(size, "No data to load");
@@ -195,7 +195,7 @@ namespace Nz
 					found = true;
 				}
 
-				ObjectRef<Type> resource = memoryLoader(data, size, parameters);
+				std::shared_ptr<Type> resource = memoryLoader(data, size, parameters);
 				if (resource)
 					return resource;
 			}
@@ -211,7 +211,7 @@ namespace Nz
 
 				stream.SetCursorPos(0);
 
-				ObjectRef<Type> resource = streamLoader(stream, parameters);
+				std::shared_ptr<Type> resource = streamLoader(stream, parameters);
 				if (resource)
 					return resource;
 			}
@@ -243,7 +243,7 @@ namespace Nz
 	* \remark Produces a NazaraError if all loaders failed or no loader was found
 	*/
 	template<typename Type, typename Parameters>
-	ObjectRef<Type> ResourceLoader<Type, Parameters>::LoadFromStream(Stream& stream, const Parameters& parameters)
+	std::shared_ptr<Type> ResourceLoader<Type, Parameters>::LoadFromStream(Stream& stream, const Parameters& parameters)
 	{
 		NazaraAssert(stream.GetCursorPos() < stream.GetSize(), "No data to load");
 		NazaraAssert(parameters.IsValid(), "Invalid parameters");
@@ -268,7 +268,7 @@ namespace Nz
 			stream.SetCursorPos(streamPos);
 
 			// Load of the resource
-			ObjectRef<Type> resource = streamLoader(stream, parameters);
+			std::shared_ptr<Type> resource = streamLoader(stream, parameters);
 			if (resource)
 				return resource;
 

@@ -16,16 +16,17 @@
 #include <Nazara/Graphics/Enums.hpp>
 #include <Nazara/Utility/Enums.hpp>
 #include <array>
+#include <memory>
 
 namespace Nz
 {
 	class ParticleDeclaration;
 
-	using ParticleDeclarationConstRef = ObjectRef<const ParticleDeclaration>;
+	using ParticleDeclarationConstRef = std::shared_ptr<const ParticleDeclaration>;
 	using ParticleDeclarationLibrary = ObjectLibrary<ParticleDeclaration>;
-	using ParticleDeclarationRef = ObjectRef<ParticleDeclaration>;
+	using ParticleDeclarationRef = std::shared_ptr<ParticleDeclaration>;
 
-	class NAZARA_GRAPHICS_API ParticleDeclaration : public RefCounted
+	class NAZARA_GRAPHICS_API ParticleDeclaration
 	{
 		friend ParticleDeclarationLibrary;
 		friend class Graphics;

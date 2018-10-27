@@ -18,9 +18,9 @@ namespace Nz
 	class AbstractTextDrawer;
 	class TextSprite;
 
-	using TextSpriteConstRef = ObjectRef<const TextSprite>;
+	using TextSpriteConstRef = std::shared_ptr<const TextSprite>;
 	using TextSpriteLibrary = ObjectLibrary<TextSprite>;
-	using TextSpriteRef = ObjectRef<TextSprite>;
+	using TextSpriteRef = std::shared_ptr<TextSprite>;
 
 	class NAZARA_GRAPHICS_API TextSprite : public InstancedRenderable
 	{

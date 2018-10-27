@@ -16,9 +16,9 @@ namespace Nz
 {
 	class Billboard;
 
-	using BillboardConstRef = ObjectRef<const Billboard>;
+	using BillboardConstRef = std::shared_ptr<const Billboard>;
 	using BillboardLibrary = ObjectLibrary<Billboard>;
-	using BillboardRef = ObjectRef<Billboard>;
+	using BillboardRef = std::shared_ptr<Billboard>;
 
 	class NAZARA_GRAPHICS_API Billboard : public InstancedRenderable
 	{

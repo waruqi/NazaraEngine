@@ -14,16 +14,17 @@
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Renderer/Config.hpp>
 #include <Nazara/Utility/Enums.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class RenderBuffer;
 
-	using RenderBufferConstRef = ObjectRef<const RenderBuffer>;
+	using RenderBufferConstRef = std::shared_ptr<const RenderBuffer>;
 	using RenderBufferLibrary = ObjectLibrary<RenderBuffer>;
-	using RenderBufferRef = ObjectRef<RenderBuffer>;
+	using RenderBufferRef = std::shared_ptr<RenderBuffer>;
 
-	class NAZARA_RENDERER_API RenderBuffer : public RefCounted
+	class NAZARA_RENDERER_API RenderBuffer
 	{
 		friend RenderBufferLibrary;
 		friend class Renderer;

@@ -13,6 +13,7 @@
 #include <Nazara/Core/RefCounted.hpp>
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Graphics/Config.hpp>
+#include <memory>
 
 namespace Nz
 {
@@ -20,11 +21,11 @@ namespace Nz
 	class ParticleMapper;
 	class ParticleGroup;
 
-	using ParticleControllerConstRef = ObjectRef<const ParticleController>;
+	using ParticleControllerConstRef = std::shared_ptr<const ParticleController>;
 	using ParticleControllerLibrary = ObjectLibrary<ParticleController>;
-	using ParticleControllerRef = ObjectRef<ParticleController>;
+	using ParticleControllerRef = std::shared_ptr<ParticleController>;
 
-	class NAZARA_GRAPHICS_API ParticleController : public RefCounted
+	class NAZARA_GRAPHICS_API ParticleController
 	{
 		friend ParticleControllerLibrary;
 		friend class Graphics;

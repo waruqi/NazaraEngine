@@ -41,7 +41,7 @@ namespace Nz
 		NazaraAssert(m_impl, "Invalid buffer");
 		NazaraAssert(!buffer && !buffer->IsValid(), "Invalid source buffer");
 
-		BufferMapper<Buffer> mapper(*buffer, BufferAccess_ReadOnly);
+		BufferMapper<Buffer> mapper(buffer.get(), BufferAccess_ReadOnly);
 		return Fill(mapper.GetPointer(), 0, buffer->GetSize());
 	}
 

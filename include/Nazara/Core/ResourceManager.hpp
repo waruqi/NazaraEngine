@@ -7,7 +7,6 @@
 #ifndef NAZARA_RESOURCEMANAGER_HPP
 #define NAZARA_RESOURCEMANAGER_HPP
 
-#include <Nazara/Core/ObjectRef.hpp>
 #include <Nazara/Core/ResourceParameters.hpp>
 #include <Nazara/Core/String.hpp>
 #include <unordered_map>
@@ -25,11 +24,11 @@ namespace Nz
 
 			static void Clear();
 
-			static ObjectRef<Type> Get(const String& filePath);
+			static std::shared_ptr<Type> Get(const String& filePath);
 			static const Parameters& GetDefaultParameters();
 
 			static void Purge();
-			static void Register(const String& filePath, ObjectRef<Type> resource);
+			static void Register(const String& filePath, std::shared_ptr<Type> resource);
 			static void SetDefaultParameters(const Parameters& params);
 			static void Unregister(const String& filePath);
 
@@ -37,7 +36,7 @@ namespace Nz
 			static bool Initialize();
 			static void Uninitialize();
 
-			using ManagerMap = std::unordered_map<String, ObjectRef<Type>>;
+			using ManagerMap = std::unordered_map<String, std::shared_ptr<Type>>;
 			using ManagerParams = Parameters;
 	};
 }

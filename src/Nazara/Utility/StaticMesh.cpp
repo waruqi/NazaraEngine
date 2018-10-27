@@ -18,16 +18,9 @@ namespace Nz
 		NazaraAssert(m_vertexBuffer, "Invalid vertex buffer");
 	}
 
-	StaticMesh::StaticMesh(const Mesh* /*parent*/) :
-	m_aabb(Nz::Boxf::Zero())
-	{
-	}
-
 	StaticMesh::~StaticMesh()
 	{
 		OnStaticMeshRelease(this);
-
-		Destroy();
 	}
 
 	void StaticMesh::Center()
@@ -44,33 +37,6 @@ namespace Nz
 		m_aabb.x -= offset.x;
 		m_aabb.y -= offset.y;
 		m_aabb.z -= offset.z;
-	}
-
-	bool StaticMesh::Create(VertexBuffer* vertexBuffer)
-	{
-		Destroy();
-
-		#if NAZARA_UTILITY_SAFE
-		if (!vertexBuffer)
-		{
-			NazaraError("Invalid vertex buffer");
-			return false;
-		}
-		#endif
-
-		m_vertexBuffer = vertexBuffer;
-		return true;
-	}
-
-	void StaticMesh::Destroy()
-	{
-		if (m_vertexBuffer)
-		{
-			OnStaticMeshDestroy(this);
-
-			m_indexBuffer.Reset();
-			m_vertexBuffer.Reset();
-		}
 	}
 
 	bool StaticMesh::GenerateAABB()
@@ -92,17 +58,17 @@ namespace Nz
 		return AnimationType_Static;
 	}
 
-	const IndexBuffer* StaticMesh::GetIndexBuffer() const
+	const IndexBufferConstRef& StaticMesh::GetIndexBuffer() const
 	{
 		return m_indexBuffer;
 	}
 
-	VertexBuffer* StaticMesh::GetVertexBuffer()
+	const VertexBufferRef& StaticMesh::GetVertexBuffer()
 	{
 		return m_vertexBuffer;
 	}
 
-	const VertexBuffer* StaticMesh::GetVertexBuffer() const
+	const VertexBufferConstRef& StaticMesh::GetVertexBuffer() const
 	{
 		return m_vertexBuffer;
 	}
@@ -129,8 +95,8 @@ namespace Nz
 		OnSubMeshInvalidateAABB(this);
 	}
 
-	void StaticMesh::SetIndexBuffer(const IndexBuffer* indexBuffer)
+	void StaticMesh::SetIndexBuffer(IndexBufferConstRef indexBuffer)
 	{
-		m_indexBuffer = indexBuffer;
+		m_indexBuffer = std::move(indexBuffer);
 	}
 }

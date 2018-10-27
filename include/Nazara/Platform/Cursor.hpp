@@ -14,6 +14,7 @@
 #include <Nazara/Platform/Enums.hpp>
 #include <Nazara/Utility/Image.hpp>
 #include <array>
+#include <memory>
 
 namespace Nz
 {
@@ -21,10 +22,10 @@ namespace Nz
 
 	class Cursor;
 
-	using CursorConstRef = ObjectRef<const Cursor>;
-	using CursorRef = ObjectRef<Cursor>;
+	using CursorConstRef = std::shared_ptr<const Cursor>;
+	using CursorRef = std::shared_ptr<Cursor>;
 
-	class NAZARA_PLATFORM_API Cursor : public RefCounted
+	class NAZARA_PLATFORM_API Cursor
 	{
 		friend class Platform;
 		friend class WindowImpl;

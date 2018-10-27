@@ -118,10 +118,7 @@ namespace Nz
 	template<typename... Args>
 	BoxCollider2DRef BoxCollider2D::New(Args&&... args)
 	{
-		std::unique_ptr<BoxCollider2D> object(new BoxCollider2D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<BoxCollider2D>(std::forward<Args>(args)...);
 	}
 
 	inline const Vector2f& CircleCollider2D::GetOffset() const
@@ -137,10 +134,7 @@ namespace Nz
 	template<typename... Args>
 	CircleCollider2DRef CircleCollider2D::New(Args&&... args)
 	{
-		std::unique_ptr<CircleCollider2D> object(new CircleCollider2D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<CircleCollider2D>(std::forward<Args>(args)...);
 	}
 
 	inline bool Nz::CompoundCollider2D::DoesOverrideCollisionProperties() const
@@ -161,10 +155,7 @@ namespace Nz
 	template<typename... Args>
 	CompoundCollider2DRef CompoundCollider2D::New(Args&&... args)
 	{
-		std::unique_ptr<CompoundCollider2D> object(new CompoundCollider2D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<CompoundCollider2D>(std::forward<Args>(args)...);
 	}
 
 	inline const std::vector<Vector2d>& ConvexCollider2D::GetVertices() const
@@ -175,19 +166,13 @@ namespace Nz
 	template<typename... Args>
 	ConvexCollider2DRef ConvexCollider2D::New(Args&&... args)
 	{
-		std::unique_ptr<ConvexCollider2D> object(new ConvexCollider2D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ConvexCollider2D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	NullCollider2DRef NullCollider2D::New(Args&&... args)
 	{
-		std::unique_ptr<NullCollider2D> object(new NullCollider2D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<NullCollider2D>(std::forward<Args>(args)...);
 	}
 
 	SegmentCollider2D::SegmentCollider2D(const Vector2f& first, const Vector2f& second, float thickness) :
@@ -220,10 +205,8 @@ namespace Nz
 	template<typename... Args>
 	SegmentCollider2DRef SegmentCollider2D::New(Args&&... args)
 	{
-		std::unique_ptr<SegmentCollider2D> object(new SegmentCollider2D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
+		return std::make_shared<SegmentCollider2D>(std::forward<Args>(args)...);
 
-		return object.release();
 	}
 }
 

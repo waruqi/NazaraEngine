@@ -17,10 +17,7 @@ namespace Nz
 	template<typename... Args>
 	ColorBackgroundRef ColorBackground::New(Args&&... args)
 	{
-		std::unique_ptr<ColorBackground> object(new ColorBackground(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ColorBackground>(std::forward<Args>(args)...);
 	}
 }
 

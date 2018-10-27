@@ -199,10 +199,7 @@ namespace Nz
 	template<typename... Args>
 	TextSpriteRef TextSprite::New(Args&&... args)
 	{
-		std::unique_ptr<TextSprite> object(new TextSprite(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<TextSprite>(std::forward<Args>(args)...);
 	}
 }
 

@@ -16,9 +16,9 @@ namespace Nz
 {
 	class Sprite;
 
-	using SpriteConstRef = ObjectRef<const Sprite>;
+	using SpriteConstRef = std::shared_ptr<const Sprite>;
 	using SpriteLibrary = ObjectLibrary<Sprite>;
-	using SpriteRef = ObjectRef<Sprite>;
+	using SpriteRef = std::shared_ptr<Sprite>;
 
 	class NAZARA_GRAPHICS_API Sprite : public InstancedRenderable
 	{

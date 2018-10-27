@@ -97,9 +97,7 @@ namespace Nz
 	template<typename... Args>
 	MaterialPipelineRef MaterialPipeline::New(Args&&... args)
 	{
-		std::unique_ptr<MaterialPipeline> object(new MaterialPipeline(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-		return object.release();
+		return std::make_shared<MaterialPipeline>(std::forward<Args>(args)...);
 	}
 }
 

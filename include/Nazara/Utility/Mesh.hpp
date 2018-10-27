@@ -24,6 +24,7 @@
 #include <Nazara/Utility/SubMesh.hpp>
 #include <Nazara/Utility/VertexDeclaration.hpp>
 #include <Nazara/Utility/VertexStruct.hpp>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -65,16 +66,16 @@ namespace Nz
 	using MeshVertex = VertexStruct_XYZ_Normal_UV_Tangent;
 	using SkeletalMeshVertex = VertexStruct_XYZ_Normal_UV_Tangent_Skinning;
 
-	using MeshConstRef = ObjectRef<const Mesh>;
+	using MeshConstRef = std::shared_ptr<const Mesh>;
 	using MeshLibrary = ObjectLibrary<Mesh>;
 	using MeshLoader = ResourceLoader<Mesh, MeshParams>;
 	using MeshManager = ResourceManager<Mesh, MeshParams>;
-	using MeshRef = ObjectRef<Mesh>;
+	using MeshRef = std::shared_ptr<Mesh>;
 	using MeshSaver = ResourceSaver<Mesh, MeshParams>;
 
 	struct MeshImpl;
 
-	class NAZARA_UTILITY_API Mesh : public RefCounted, public Resource
+	class NAZARA_UTILITY_API Mesh : public Resource
 	{
 		friend MeshLibrary;
 		friend MeshLoader;
@@ -88,10 +89,10 @@ namespace Nz
 			Mesh(Mesh&&) = delete;
 			inline ~Mesh();
 
-			void AddSubMesh(SubMesh* subMesh);
-			void AddSubMesh(const String& identifier, SubMesh* subMesh);
+			const SubMeshRef& AddSubMesh(SubMeshRef subMesh);
+			const SubMeshRef& AddSubMesh(const String& identifier, SubMeshRef subMesh);
 
-			SubMesh* BuildSubMesh(const Primitive& primitive, const MeshParams& params = MeshParams());
+			const SubMeshRef& BuildSubMesh(const Primitive& primitive, const MeshParams& params = MeshParams());
 			void BuildSubMeshes(const PrimitiveList& list, const MeshParams& params = MeshParams());
 
 			bool CreateSkeletal(UInt32 jointCount);
@@ -109,12 +110,12 @@ namespace Nz
 			ParameterList& GetMaterialData(UInt32 index);
 			const ParameterList& GetMaterialData(UInt32 index) const;
 			UInt32 GetMaterialCount() const;
-			Skeleton* GetSkeleton();
-			const Skeleton* GetSkeleton() const;
-			SubMesh* GetSubMesh(const String& identifier);
-			SubMesh* GetSubMesh(UInt32 index);
-			const SubMesh* GetSubMesh(const String& identifier) const;
-			const SubMesh* GetSubMesh(UInt32 index) const;
+			Skeleton& GetSkeleton();
+			const Skeleton& GetSkeleton() const;
+			const SubMeshRef& GetSubMesh(const String& identifier);
+			const SubMeshRef& GetSubMesh(UInt32 index);
+			const SubMeshConstRef& GetSubMesh(const String& identifier) const;
+			const SubMeshConstRef& GetSubMesh(UInt32 index) const;
 			UInt32 GetSubMeshCount() const;
 			UInt32 GetSubMeshIndex(const String& identifier) const;
 			UInt32 GetTriangleCount() const;

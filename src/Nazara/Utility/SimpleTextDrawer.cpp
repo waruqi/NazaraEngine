@@ -67,12 +67,12 @@ namespace Nz
 		return m_color;
 	}
 
-	Font* SimpleTextDrawer::GetFont() const
+	const FontRef& SimpleTextDrawer::GetFont() const
 	{
 		return m_font;
 	}
 
-	Font* SimpleTextDrawer::GetFont(std::size_t index) const
+	const FontRef& SimpleTextDrawer::GetFont(std::size_t index) const
 	{
 		NazaraAssert(index == 0, "Font index out of range");
 		NazaraUnused(index);
@@ -144,11 +144,11 @@ namespace Nz
 		m_colorUpdated = false;
 	}
 
-	void SimpleTextDrawer::SetFont(Font* font)
+	void SimpleTextDrawer::SetFont(FontRef font)
 	{
 		if (m_font != font)
 		{
-			m_font = font;
+			m_font = std::move(font);
 
 			if (m_font)
 				ConnectFontSlots();
@@ -399,7 +399,7 @@ namespace Nz
 		NazaraUnused(font);
 
 		#ifdef NAZARA_DEBUG
-		if (m_font != font)
+		if (m_font.get() != font)
 		{
 			NazaraInternalError("Not listening to " + String::Pointer(font));
 			return;
@@ -420,7 +420,7 @@ namespace Nz
 		NazaraUnused(font);
 
 		#ifdef NAZARA_DEBUG
-		if (m_font != font)
+		if (m_font.get() != font)
 		{
 			NazaraInternalError("Not listening to " + String::Pointer(font));
 			return;
@@ -436,7 +436,7 @@ namespace Nz
 		NazaraUnused(font);
 
 		#ifdef NAZARA_DEBUG
-		if (m_font != font)
+		if (m_font.get() != font)
 		{
 			NazaraInternalError("Not listening to " + String::Pointer(font));
 			return;

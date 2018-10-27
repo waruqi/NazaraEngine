@@ -16,43 +16,9 @@ namespace Nz
 		NazaraAssert(m_vertexBuffer, "Invalid vertex buffer");
 	}
 
-	SkeletalMesh::SkeletalMesh(const Mesh* /*parent*/) :
-	m_aabb(Nz::Boxf::Zero())
-	{
-	}
-
 	SkeletalMesh::~SkeletalMesh()
 	{
 		OnSkeletalMeshRelease(this);
-
-		Destroy();
-	}
-
-	bool SkeletalMesh::Create(VertexBuffer* vertexBuffer)
-	{
-		Destroy();
-
-		#if NAZARA_UTILITY_SAFE
-		if (!vertexBuffer)
-		{
-			NazaraError("Invalid vertex buffer");
-			return false;
-		}
-		#endif
-
-		m_vertexBuffer = vertexBuffer;
-		return true;
-	}
-
-	void SkeletalMesh::Destroy()
-	{
-		if (m_vertexBuffer)
-		{
-			OnSkeletalMeshDestroy(this);
-
-			m_indexBuffer.Reset();
-			m_vertexBuffer.Reset();
-		}
 	}
 
 	const Boxf& SkeletalMesh::GetAABB() const
@@ -65,17 +31,17 @@ namespace Nz
 		return AnimationType_Skeletal;
 	}
 
-	const IndexBuffer* SkeletalMesh::GetIndexBuffer() const
+	const IndexBufferConstRef& SkeletalMesh::GetIndexBuffer() const
 	{
 		return m_indexBuffer;
 	}
 
-	VertexBuffer* SkeletalMesh::GetVertexBuffer()
+	const VertexBufferRef& SkeletalMesh::GetVertexBuffer()
 	{
 		return m_vertexBuffer;
 	}
 
-	const VertexBuffer* SkeletalMesh::GetVertexBuffer() const
+	const VertexBufferConstRef& SkeletalMesh::GetVertexBuffer() const
 	{
 		return m_vertexBuffer;
 	}
@@ -102,8 +68,8 @@ namespace Nz
 		OnSubMeshInvalidateAABB(this);
 	}
 
-	void SkeletalMesh::SetIndexBuffer(const IndexBuffer* indexBuffer)
+	void SkeletalMesh::SetIndexBuffer(IndexBufferConstRef indexBuffer)
 	{
-		m_indexBuffer = indexBuffer;
+		m_indexBuffer = std::move(indexBuffer);
 	}
 }

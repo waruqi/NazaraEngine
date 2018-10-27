@@ -13,15 +13,16 @@
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Utility/Buffer.hpp>
 #include <Nazara/Utility/VertexDeclaration.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class VertexBuffer;
 
-	using VertexBufferConstRef = ObjectRef<VertexBuffer>;
-	using VertexBufferRef = ObjectRef<VertexBuffer>;
+	using VertexBufferConstRef = std::shared_ptr<const VertexBuffer>;
+	using VertexBufferRef = std::shared_ptr<VertexBuffer>;
 
-	class NAZARA_UTILITY_API VertexBuffer : public RefCounted
+	class NAZARA_UTILITY_API VertexBuffer
 	{
 		public:
 			VertexBuffer() = default;

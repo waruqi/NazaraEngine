@@ -62,10 +62,7 @@ namespace Nz
 	template<typename... Args>
 	ModelRef Model::New(Args&&... args)
 	{
-		std::unique_ptr<Model> object(new Model(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Model>(std::forward<Args>(args)...);
 	}
 }
 

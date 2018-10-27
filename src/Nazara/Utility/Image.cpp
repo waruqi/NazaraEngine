@@ -143,7 +143,7 @@ namespace Nz
 		return true;
 	}
 
-	void Image::Copy(const Image* source, const Boxui& srcBox, const Vector3ui& dstPos)
+	void Image::Copy(const ImageConstRef& source, const Boxui& srcBox, const Vector3ui& dstPos)
 	{
 		NazaraAssert(IsValid(), "Invalid image");
 		NazaraAssert(source && source->IsValid(), "Invalid source image");
@@ -862,7 +862,7 @@ namespace Nz
 		return LoadArrayFromImage(image, atlasSize);
 	}
 
-	ImageRef Image::LoadArrayFromImage(const Image* image, const Vector2ui& atlasSize)
+	ImageRef Image::LoadArrayFromImage(const ImageConstRef& image, const Vector2ui& atlasSize)
 	{
 		NazaraAssert(image && image->IsValid(), "Invalid image");
 
@@ -963,7 +963,7 @@ namespace Nz
 		return LoadCubemapFromImage(image, cubemapParams);
 	}
 
-	ImageRef Image::LoadCubemapFromImage(const Image* image, const CubemapParams& params)
+	ImageRef Image::LoadCubemapFromImage(const ImageConstRef& image, const CubemapParams& params)
 	{
 		NazaraAssert(image && image->IsValid(), "Invalid image");
 

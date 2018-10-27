@@ -11,22 +11,23 @@
 #include <Nazara/Core/ObjectRef.hpp>
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Utility/Buffer.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class IndexBuffer;
 
-	using IndexBufferConstRef = ObjectRef<const IndexBuffer>;
-	using IndexBufferRef = ObjectRef<IndexBuffer>;
+	using IndexBufferConstRef = std::shared_ptr<const IndexBuffer>;
+	using IndexBufferRef = std::shared_ptr<IndexBuffer>;
 
-	class NAZARA_UTILITY_API IndexBuffer : public RefCounted
+	class NAZARA_UTILITY_API IndexBuffer
 	{
 		public:
 			IndexBuffer() = default;
 			IndexBuffer(bool largeIndices, BufferRef buffer);
 			IndexBuffer(bool largeIndices, BufferRef buffer, UInt32 offset, UInt32 size);
 			IndexBuffer(bool largeIndices, UInt32 length, DataStorage storage, BufferUsageFlags usage);
-			IndexBuffer(const IndexBuffer& indexBuffer);
+			IndexBuffer(const IndexBuffer& indexBuffer) = default;
 			IndexBuffer(IndexBuffer&&) = delete;
 			~IndexBuffer();
 

@@ -62,14 +62,14 @@ namespace Nz
 		for (unsigned int i = 0; i < submeshCount; ++i)
 		{
 			const SkeletalMesh* mesh = static_cast<const SkeletalMesh*>(m_mesh->GetSubMesh(i));
-			const Material* material = GetMaterial(mesh->GetMaterialIndex());
+			const MaterialRef& material = GetMaterial(mesh->GetMaterialIndex());
 
 			MeshData meshData;
 			meshData.indexBuffer = mesh->GetIndexBuffer();
 			meshData.primitiveMode = mesh->GetPrimitiveMode();
 			meshData.vertexBuffer = SkinningManager::GetBuffer(mesh, &m_skeleton);
 
-			renderQueue->AddMesh(instanceData.renderOrder, material, meshData, m_skeleton.GetAABB(), instanceData.transformMatrix, scissorRect);
+			renderQueue->AddMesh(instanceData.renderOrder, material.get(), meshData, m_skeleton.GetAABB(), instanceData.transformMatrix, scissorRect);
 		}
 	}
 
@@ -156,8 +156,7 @@ namespace Nz
 	* \brief Gets the animation of the model
 	* \return Pointer to the animation
 	*/
-
-	Animation* SkeletalModel::GetAnimation() const
+	const AnimationRef& SkeletalModel::GetAnimation() const
 	{
 		return m_animation;
 	}
@@ -167,11 +166,11 @@ namespace Nz
 	* \return Pointer to the skeleton
 	*/
 
-	Skeleton* SkeletalModel::GetSkeleton()
+	Skeleton& SkeletalModel::GetSkeleton()
 	{
 		InvalidateBoundingVolume();
 
-		return &m_skeleton;
+		return m_skeleton;
 	}
 
 	/*!
@@ -179,9 +178,9 @@ namespace Nz
 	* \return Constant pointer to the skeleton
 	*/
 
-	const Skeleton* SkeletalModel::GetSkeleton() const
+	const Skeleton& SkeletalModel::GetSkeleton() const
 	{
-		return &m_skeleton;
+		return m_skeleton;
 	}
 
 	/*!
@@ -230,7 +229,7 @@ namespace Nz
 	* \remark Produces a NazaraError with NAZARA_GRAPHICS_SAFE if animation is invalid
 	*/
 
-	bool SkeletalModel::SetAnimation(Animation* animation)
+	bool SkeletalModel::SetAnimation(AnimationRef animation)
 	{
 		#if NAZARA_GRAPHICS_SAFE
 		if (!m_mesh)
@@ -261,7 +260,7 @@ namespace Nz
 		}
 		#endif
 
-		m_animation = animation;
+		m_animation = std::move(animation);
 		if (m_animation)
 		{
 			m_currentFrame = 0;
@@ -281,7 +280,7 @@ namespace Nz
 	* \remark Produces a NazaraError with NAZARA_GRAPHICS_SAFE if there is no mesh or if invalid
 	*/
 
-	void SkeletalModel::SetMesh(Mesh* mesh)
+	void SkeletalModel::SetMesh(MeshRef mesh)
 	{
 		#if NAZARA_GRAPHICS_SAFE
 		if (mesh && mesh->GetAnimationType() != AnimationType_Skeletal)
@@ -380,16 +379,5 @@ namespace Nz
 	void SkeletalModel::MakeBoundingVolume() const
 	{
 		m_boundingVolume.Set(m_skeleton.GetAABB());
-	}
-
-	/*!
-	* \brief Updates the model
-	*/
-
-	void SkeletalModel::Update()
-	{
-		///TODO
-		/*if (m_animationEnabled && m_animation)
-			AdvanceAnimation(m_scene->GetUpdateTime());*/
 	}
 }

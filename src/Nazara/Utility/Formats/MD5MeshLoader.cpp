@@ -65,14 +65,14 @@ namespace Nz
 				MeshRef mesh = Mesh::New();
 				mesh->CreateSkeletal(jointCount);
 
-				Skeleton* skeleton = mesh->GetSkeleton();
+				Skeleton& skeleton = mesh->GetSkeleton();
 				for (UInt32 i = 0; i < jointCount; ++i)
 				{
-					Joint* joint = skeleton->GetJoint(i);
+					Joint* joint = skeleton.GetJoint(i);
 
 					int parent = joints[i].parent;
 					if (parent >= 0)
-						joint->SetParent(skeleton->GetJoint(parent));
+						joint->SetParent(skeleton.GetJoint(parent));
 
 					joint->SetName(joints[i].name);
 
@@ -100,7 +100,7 @@ namespace Nz
 					VertexBufferRef vertexBuffer = VertexBuffer::New(VertexDeclaration::Get(VertexLayout_XYZ_Normal_UV_Tangent_Skinning), UInt32(vertexCount), parameters.storage, parameters.vertexBufferFlags | BufferUsage_Dynamic);
 
 					// Index buffer
-					IndexMapper indexMapper(indexBuffer, BufferAccess_DiscardAndWrite);
+					IndexMapper indexMapper(indexBuffer.get(), BufferAccess_DiscardAndWrite);
 
 					// Le format définit un set de triangles nous permettant de retrouver facilement les indices
 					// Cependant les sommets des triangles ne sont pas spécifiés dans le même ordre que ceux du moteur
@@ -128,7 +128,7 @@ namespace Nz
 
 					std::vector<Weight> tempWeights;
 
-					BufferMapper<VertexBuffer> vertexMapper(vertexBuffer, BufferAccess_WriteOnly);
+					BufferMapper<VertexBuffer> vertexMapper(vertexBuffer.get(), BufferAccess_WriteOnly);
 					SkeletalMeshVertex* vertices = static_cast<SkeletalMeshVertex*>(vertexMapper.GetPointer());
 
 					for (const MD5MeshParser::Vertex& vertex : md5Mesh.vertices)
@@ -243,7 +243,7 @@ namespace Nz
 
 					IndexBufferRef indexBuffer = IndexBuffer::New(largeIndices, UInt32(indexCount), parameters.storage, parameters.indexBufferFlags);
 
-					IndexMapper indexMapper(indexBuffer, BufferAccess_DiscardAndWrite);
+					IndexMapper indexMapper(indexBuffer.get(), BufferAccess_DiscardAndWrite);
 					IndexIterator index = indexMapper.begin();
 
 					for (const MD5MeshParser::Triangle& triangle : md5Mesh.triangles)
@@ -261,7 +261,7 @@ namespace Nz
 					// Vertex buffer
 					VertexBufferRef vertexBuffer = VertexBuffer::New(parameters.vertexDeclaration, UInt32(vertexCount), parameters.storage, parameters.vertexBufferFlags);
 
-					VertexMapper vertexMapper(vertexBuffer, BufferAccess_DiscardAndWrite);
+					VertexMapper vertexMapper(vertexBuffer.get(), BufferAccess_DiscardAndWrite);
 
 					auto posPtr = vertexMapper.GetComponentPtr<Vector3f>(VertexComponent_Position);
 

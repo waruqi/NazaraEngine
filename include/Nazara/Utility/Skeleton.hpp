@@ -14,19 +14,20 @@
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Math/Box.hpp>
 #include <Nazara/Utility/Config.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class Joint;
 	class Skeleton;
 
-	using SkeletonConstRef = ObjectRef<const Skeleton>;
+	using SkeletonConstRef = std::shared_ptr<const Skeleton>;
 	using SkeletonLibrary = ObjectLibrary<Skeleton>;
-	using SkeletonRef = ObjectRef<Skeleton>;
+	using SkeletonRef = std::shared_ptr<Skeleton>;
 
 	struct SkeletonImpl;
 
-	class NAZARA_UTILITY_API Skeleton : public RefCounted
+	class NAZARA_UTILITY_API Skeleton
 	{
 		friend Joint;
 		friend SkeletonLibrary;

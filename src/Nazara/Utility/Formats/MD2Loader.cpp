@@ -116,7 +116,7 @@ namespace Nz
 			stream.Read(&triangles[0], header.num_tris*sizeof(MD2_Triangle));
 
 			// And convert them into an index buffer
-			BufferMapper<IndexBuffer> indexMapper(indexBuffer, BufferAccess_DiscardAndWrite);
+			BufferMapper<IndexBuffer> indexMapper(indexBuffer.get(), BufferAccess_DiscardAndWrite);
 			UInt16* index = static_cast<UInt16*>(indexMapper.GetPointer());
 
 			for (unsigned int i = 0; i < header.num_tris; ++i)
@@ -186,7 +186,7 @@ namespace Nz
 			scale *= ScaleAdjust;
 			translate *= ScaleAdjust;
 
-			VertexMapper vertexMapper(vertexBuffer, BufferAccess_DiscardAndWrite);
+			VertexMapper vertexMapper(vertexBuffer.get(), BufferAccess_DiscardAndWrite);
 
 			// Loading texture coordinates
 			if (auto uvPtr = vertexMapper.GetComponentPtr<Vector2f>(VertexComponent_TexCoord))

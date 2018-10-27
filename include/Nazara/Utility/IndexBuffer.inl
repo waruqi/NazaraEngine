@@ -44,7 +44,7 @@ namespace Nz
 
 	inline bool IndexBuffer::IsValid() const
 	{
-		return m_buffer.IsValid();
+		return m_buffer && m_buffer->IsValid();
 	}
 
 	inline void* IndexBuffer::Map(BufferAccess access, UInt32 startIndex, UInt32 length)
@@ -62,10 +62,7 @@ namespace Nz
 	template<typename... Args>
 	IndexBufferRef IndexBuffer::New(Args&&... args)
 	{
-		std::unique_ptr<IndexBuffer> object(new IndexBuffer(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<IndexBuffer>(std::forward<Args>(args)...);
 	}
 }
 

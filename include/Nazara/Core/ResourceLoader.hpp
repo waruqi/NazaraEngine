@@ -30,19 +30,19 @@ namespace Nz
 
 		public:
 			using ExtensionGetter = bool (*)(const String& extension);
-			using FileLoader = ObjectRef<Type> (*)(const String& filePath, const Parameters& parameters);
-			using MemoryLoader = ObjectRef<Type> (*)(const void* data, std::size_t size, const Parameters& parameters);
+			using FileLoader = std::shared_ptr<Type> (*)(const String& filePath, const Parameters& parameters);
+			using MemoryLoader = std::shared_ptr<Type> (*)(const void* data, std::size_t size, const Parameters& parameters);
 			using StreamChecker = Ternary (*)(Stream& stream, const Parameters& parameters);
-			using StreamLoader = ObjectRef<Type> (*)(Stream& stream, const Parameters& parameters);
+			using StreamLoader = std::shared_ptr<Type> (*)(Stream& stream, const Parameters& parameters);
 
 			ResourceLoader() = delete;
 			~ResourceLoader() = delete;
 
 			static bool IsExtensionSupported(const String& extension);
 
-			static ObjectRef<Type> LoadFromFile(const String& filePath, const Parameters& parameters = Parameters());
-			static ObjectRef<Type> LoadFromMemory(const void* data, std::size_t size, const Parameters& parameters = Parameters());
-			static ObjectRef<Type> LoadFromStream(Stream& stream, const Parameters& parameters = Parameters());
+			static std::shared_ptr<Type> LoadFromFile(const String& filePath, const Parameters& parameters = Parameters());
+			static std::shared_ptr<Type> LoadFromMemory(const void* data, std::size_t size, const Parameters& parameters = Parameters());
+			static std::shared_ptr<Type> LoadFromStream(Stream& stream, const Parameters& parameters = Parameters());
 
 			static void RegisterLoader(ExtensionGetter extensionGetter, StreamChecker checkFunc, StreamLoader streamLoader, FileLoader fileLoader = nullptr, MemoryLoader memoryLoader = nullptr);
 			static void UnregisterLoader(ExtensionGetter extensionGetter, StreamChecker checkFunc, StreamLoader streamLoader, FileLoader fileLoader = nullptr, MemoryLoader memoryLoader = nullptr);

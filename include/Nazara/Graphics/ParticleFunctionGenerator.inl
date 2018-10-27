@@ -35,10 +35,7 @@ namespace Nz
 	template<typename... Args>
 	ParticleFunctionGeneratorRef ParticleFunctionGenerator::New(Args&&... args)
 	{
-		std::unique_ptr<ParticleFunctionGenerator> object(new ParticleFunctionGenerator(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ParticleFunctionGenerator>(std::forward<Args>(args)...);
 	}
 }
 

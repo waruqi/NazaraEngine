@@ -19,7 +19,6 @@ namespace Nz
 	};
 
 	Skeleton::Skeleton(const Skeleton& skeleton) :
-	RefCounted(),
 	m_impl(nullptr)
 	{
 		operator=(skeleton);

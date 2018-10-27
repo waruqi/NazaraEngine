@@ -15,15 +15,16 @@
 #include <Nazara/Utility/Config.hpp>
 #include <Nazara/Utility/Enums.hpp>
 #include <array>
+#include <memory>
 
 namespace Nz
 {
 	class Buffer;
 
-	using BufferConstRef = ObjectRef<const Buffer>;
-	using BufferRef = ObjectRef<Buffer>;
+	using BufferConstRef = std::shared_ptr<const Buffer>;
+	using BufferRef = std::shared_ptr<Buffer>;
 
-	class NAZARA_UTILITY_API Buffer : public RefCounted
+	class NAZARA_UTILITY_API Buffer
 	{
 		friend class Utility;
 

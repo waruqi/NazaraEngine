@@ -248,41 +248,38 @@ namespace Nz
 
 		SoundStreamRef LoadSoundStreamFile(const String& filePath, const SoundStreamParams& parameters)
 		{
-			std::unique_ptr<sndfileStream> soundStream(new sndfileStream);
+			auto soundStream = std::make_shared<sndfileStream>();
 			if (!soundStream->Open(filePath, parameters.forceMono))
 			{
 				NazaraError("Failed to open sound stream");
 				return nullptr;
 			}
 
-			soundStream->SetPersistent(false);
-			return soundStream.release();
+			return soundStream;
 		}
 
 		SoundStreamRef LoadSoundStreamMemory(const void* data, std::size_t size, const SoundStreamParams& parameters)
 		{
-			std::unique_ptr<sndfileStream> soundStream(new sndfileStream);
+			auto soundStream = std::make_shared<sndfileStream>();
 			if (!soundStream->Open(data, size, parameters.forceMono))
 			{
 				NazaraError("Failed to open music stream");
 				return nullptr;
 			}
 
-			soundStream->SetPersistent(false);
-			return soundStream.release();
+			return soundStream;
 		}
 
 		SoundStreamRef LoadSoundStreamStream(Stream& stream, const SoundStreamParams& parameters)
 		{
-			std::unique_ptr<sndfileStream> soundStream(new sndfileStream);
+			auto soundStream = std::make_shared<sndfileStream>();
 			if (!soundStream->Open(stream, parameters.forceMono))
 			{
 				NazaraError("Failed to open music stream");
 				return nullptr;
 			}
 
-			soundStream->SetPersistent(false);
-			return soundStream.release();
+			return soundStream;
 		}
 
 		Ternary CheckSoundBuffer(Stream& stream, const SoundBufferParams& parameters)

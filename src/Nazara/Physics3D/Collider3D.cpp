@@ -6,6 +6,7 @@
 #include <Nazara/Core/PrimitiveList.hpp>
 #include <Nazara/Physics3D/PhysWorld3D.hpp>
 #include <Newton/Newton.h>
+#include <memory>
 #include <Nazara/Physics3D/Debug.hpp>
 
 namespace Nz
@@ -286,7 +287,7 @@ namespace Nz
 		{
 			if (geom->GetType() == ColliderType3D_Compound)
 			{
-				CompoundCollider3D* compoundGeom = static_cast<CompoundCollider3D*>(geom.Get());
+				CompoundCollider3DConstRef compoundGeom = std::static_pointer_cast<CompoundCollider3D>(geom);
 				for (const Collider3DRef& piece : compoundGeom->GetGeoms())
 					NewtonCompoundCollisionAddSubCollision(compoundCollision, piece->GetHandle(world));
 			}

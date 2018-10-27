@@ -13,14 +13,8 @@
 namespace Nz
 {
 	SubMesh::SubMesh() :
-	RefCounted(false), // wut
 	m_primitiveMode(PrimitiveMode_TriangleList),
 	m_matIndex(0)
-	{
-	}
-
-	SubMesh::SubMesh(const Mesh* /*parent*/) :
-	SubMesh()
 	{
 	}
 
@@ -171,7 +165,7 @@ namespace Nz
 
 	unsigned int SubMesh::GetTriangleCount() const
 	{
-		const IndexBuffer* indexBuffer = GetIndexBuffer();
+		const IndexBufferConstRef& indexBuffer = GetIndexBuffer();
 		unsigned int indexCount;
 		if (indexBuffer)
 			indexCount = indexBuffer->GetIndexCount();

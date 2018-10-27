@@ -22,12 +22,11 @@ namespace Ndk
 			ConstraintComponent2D(const ConstraintComponent2D& joint) = default;
 			ConstraintComponent2D(ConstraintComponent2D&& joint) = default;
 
-			template<typename T, typename... Args> inline Nz::ObjectRef<T> CreateConstraint(const Ndk::EntityHandle& first, const Ndk::EntityHandle& second, Args&&... args);
+			template<typename T, typename... Args> std::shared_ptr<T> CreateConstraint(const Ndk::EntityHandle& first, const Ndk::EntityHandle& second, Args&&... args);
 		
 			static ComponentIndex componentIndex;
 
 		private:
-
 			std::vector<Nz::Constraint2DRef> m_constraints;
 	};
 

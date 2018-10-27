@@ -1486,10 +1486,7 @@ namespace Nz
 	template<typename... Args>
 	MaterialRef Material::New(Args&&... args)
 	{
-		std::unique_ptr<Material> object(new Material(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Material>(std::forward<Args>(args)...);
 	}
 }
 

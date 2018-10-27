@@ -39,16 +39,13 @@ namespace Nz
 
 	inline bool VertexBuffer::IsValid() const
 	{
-		return m_buffer.IsValid() && m_vertexDeclaration.IsValid();
+		return m_buffer && m_buffer->IsValid() && m_vertexDeclaration;
 	}
 
 	template<typename... Args>
 	VertexBufferRef VertexBuffer::New(Args&&... args)
 	{
-		std::unique_ptr<VertexBuffer> object(new VertexBuffer(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<VertexBuffer>(std::forward<Args>(args)...);
 	}
 }
 

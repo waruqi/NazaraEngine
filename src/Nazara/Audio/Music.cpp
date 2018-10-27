@@ -55,7 +55,7 @@ namespace Nz
 	* \param soundStream Sound stream which is the source for the music
 	*/
 
-	bool Music::Create(SoundStream* soundStream)
+	bool Music::Create(SoundStreamRef soundStream)
 	{
 		NazaraAssert(soundStream, "Invalid stream");
 
@@ -67,7 +67,7 @@ namespace Nz
 		m_impl->sampleRate = soundStream->GetSampleRate();
 		m_impl->audioFormat = OpenAL::AudioFormat[format];
 		m_impl->chunkSamples.resize(format * m_impl->sampleRate); // One second of samples
-		m_impl->stream = soundStream;
+		m_impl->stream = std::move(soundStream);
 
 		SetPlayingOffset(0);
 

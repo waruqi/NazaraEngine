@@ -8,7 +8,6 @@
 #define NAZARA_SKELETALMESH_HPP
 
 #include <Nazara/Prerequisites.hpp>
-#include <Nazara/Core/ObjectRef.hpp>
 #include <Nazara/Core/Signal.hpp>
 #include <Nazara/Utility/IndexBuffer.hpp>
 #include <Nazara/Utility/SubMesh.hpp>
@@ -18,40 +17,31 @@ namespace Nz
 {
 	class SkeletalMesh;
 
-	using SkeletalMeshConstRef = ObjectRef<const SkeletalMesh>;
-	using SkeletalMeshRef = ObjectRef<SkeletalMesh>;
+	using SkeletalMeshConstRef = std::shared_ptr<const SkeletalMesh>;
+	using SkeletalMeshRef = std::shared_ptr<SkeletalMesh>;
 
 	class NAZARA_UTILITY_API SkeletalMesh final : public SubMesh
 	{
 		public:
 			SkeletalMesh(VertexBuffer* vertexBuffer, const IndexBuffer* indexBuffer);
-
-			NAZARA_DEPRECATED("SkeletalMesh constructor taking a mesh is deprecated, submeshes no longer require to be part of a single mesh")
-			SkeletalMesh(const Mesh* parent);
-
 			~SkeletalMesh();
-
-			NAZARA_DEPRECATED("SkeletalMesh create/destroy functions are deprecated, please use constructor")
-			bool Create(VertexBuffer* vertexBuffer);
-			void Destroy();
 
 			const Boxf& GetAABB() const override;
 			AnimationType GetAnimationType() const final override;
-			const IndexBuffer* GetIndexBuffer() const override;
-			VertexBuffer* GetVertexBuffer();
-			const VertexBuffer* GetVertexBuffer() const;
+			const IndexBufferConstRef& GetIndexBuffer() const override;
+			const VertexBufferRef& GetVertexBuffer();
+			const VertexBufferConstRef& GetVertexBuffer() const;
 			unsigned int GetVertexCount() const override;
 
 			bool IsAnimated() const final override;
 			bool IsValid() const;
 
 			void SetAABB(const Boxf& aabb);
-			void SetIndexBuffer(const IndexBuffer* indexBuffer);
+			void SetIndexBuffer(IndexBufferConstRef indexBuffer);
 
 			template<typename... Args> static SkeletalMeshRef New(Args&&... args);
 
 			// Signals:
-			NazaraSignal(OnSkeletalMeshDestroy, const SkeletalMesh* /*skeletalMesh*/);
 			NazaraSignal(OnSkeletalMeshRelease, const SkeletalMesh* /*skeletalMesh*/);
 
 		private:

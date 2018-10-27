@@ -9,7 +9,6 @@
 
 #include <Nazara/Prerequisites.hpp>
 #include <Nazara/Renderer/Enums.hpp>
-#include <Nazara/Core/ObjectRef.hpp>
 #include <Nazara/Renderer/ShaderStage.hpp>
 #include <Nazara/Renderer/UberShader.hpp>
 #include <Nazara/Renderer/UberShaderInstancePreprocessor.hpp>
@@ -20,8 +19,8 @@ namespace Nz
 	class UberShaderInstance;
 	class UberShaderPreprocessor;
 
-	using UberShaderPreprocessorConstRef = ObjectRef<const UberShaderPreprocessor>;
-	using UberShaderPreprocessorRef = ObjectRef<UberShaderPreprocessor>;
+	using UberShaderPreprocessorConstRef = std::shared_ptr<const UberShaderPreprocessor>;
+	using UberShaderPreprocessorRef = std::shared_ptr<UberShaderPreprocessor>;
 
 	class NAZARA_RENDERER_API UberShaderPreprocessor : public UberShader
 	{

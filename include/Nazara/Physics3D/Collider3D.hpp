@@ -18,6 +18,7 @@
 #include <Nazara/Math/Vector3.hpp>
 #include <Nazara/Physics3D/Config.hpp>
 #include <Nazara/Physics3D/Enums.hpp>
+#include <memory>
 #include <unordered_map>
 
 class NewtonCollision;
@@ -34,11 +35,11 @@ namespace Nz
 	class PrimitiveList;
 	class PhysWorld3D;
 
-	using Collider3DConstRef = ObjectRef<const Collider3D>;
+	using Collider3DConstRef = std::shared_ptr<const Collider3D>;
 	using Collider3DLibrary = ObjectLibrary<Collider3D>;
-	using Collider3DRef = ObjectRef<Collider3D>;
+	using Collider3DRef = std::shared_ptr<Collider3D>;
 
-	class NAZARA_PHYSICS3D_API Collider3D : public RefCounted
+	class NAZARA_PHYSICS3D_API Collider3D
 	{
 		friend Collider3DLibrary;
 		friend class Physics3D;
@@ -80,8 +81,8 @@ namespace Nz
 
 	class BoxCollider3D;
 
-	using BoxCollider3DConstRef = ObjectRef<const BoxCollider3D>;
-	using BoxCollider3DRef = ObjectRef<BoxCollider3D>;
+	using BoxCollider3DConstRef = std::shared_ptr<const BoxCollider3D>;
+	using BoxCollider3DRef = std::shared_ptr<BoxCollider3D>;
 
 	class NAZARA_PHYSICS3D_API BoxCollider3D : public Collider3D
 	{
@@ -106,8 +107,8 @@ namespace Nz
 
 	class CapsuleCollider3D;
 
-	using CapsuleCollider3DConstRef = ObjectRef<const CapsuleCollider3D>;
-	using CapsuleCollider3DRef = ObjectRef<CapsuleCollider3D>;
+	using CapsuleCollider3DConstRef = std::shared_ptr<const CapsuleCollider3D>;
+	using CapsuleCollider3DRef = std::shared_ptr<CapsuleCollider3D>;
 
 	class NAZARA_PHYSICS3D_API CapsuleCollider3D : public Collider3D
 	{
@@ -131,8 +132,8 @@ namespace Nz
 
 	class CompoundCollider3D;
 
-	using CompoundCollider3DConstRef = ObjectRef<const CompoundCollider3D>;
-	using CompoundCollider3DRef = ObjectRef<CompoundCollider3D>;
+	using CompoundCollider3DConstRef = std::shared_ptr<const CompoundCollider3D>;
+	using CompoundCollider3DRef = std::shared_ptr<CompoundCollider3D>;
 
 	class NAZARA_PHYSICS3D_API CompoundCollider3D : public Collider3D
 	{
@@ -152,8 +153,8 @@ namespace Nz
 
 	class ConeCollider3D;
 
-	using ConeCollider3DConstRef = ObjectRef<const ConeCollider3D>;
-	using ConeCollider3DRef = ObjectRef<ConeCollider3D>;
+	using ConeCollider3DConstRef = std::shared_ptr<const ConeCollider3D>;
+	using ConeCollider3DRef = std::shared_ptr<ConeCollider3D>;
 
 	class NAZARA_PHYSICS3D_API ConeCollider3D : public Collider3D
 	{
@@ -177,8 +178,8 @@ namespace Nz
 
 	class ConvexCollider3D;
 
-	using ConvexCollider3DConstRef = ObjectRef<const ConvexCollider3D>;
-	using ConvexCollider3DRef = ObjectRef<ConvexCollider3D>;
+	using ConvexCollider3DConstRef = std::shared_ptr<const ConvexCollider3D>;
+	using ConvexCollider3DRef = std::shared_ptr<ConvexCollider3D>;
 
 	class NAZARA_PHYSICS3D_API ConvexCollider3D : public Collider3D
 	{
@@ -200,8 +201,8 @@ namespace Nz
 
 	class CylinderCollider3D;
 
-	using CylinderCollider3DConstRef = ObjectRef<const CylinderCollider3D>;
-	using CylinderCollider3DRef = ObjectRef<CylinderCollider3D>;
+	using CylinderCollider3DConstRef = std::shared_ptr<const CylinderCollider3D>;
+	using CylinderCollider3DRef = std::shared_ptr<CylinderCollider3D>;
 
 	class NAZARA_PHYSICS3D_API CylinderCollider3D : public Collider3D
 	{
@@ -225,8 +226,8 @@ namespace Nz
 
 	class NullCollider3D;
 
-	using NullCollider3DConstRef = ObjectRef<const NullCollider3D>;
-	using NullCollider3DRef = ObjectRef<NullCollider3D>;
+	using NullCollider3DConstRef = std::shared_ptr<const NullCollider3D>;
+	using NullCollider3DRef = std::shared_ptr<NullCollider3D>;
 
 	class NAZARA_PHYSICS3D_API NullCollider3D : public Collider3D
 	{
@@ -245,8 +246,8 @@ namespace Nz
 
 	class SphereCollider3D;
 
-	using SphereCollider3DConstRef = ObjectRef<const SphereCollider3D>;
-	using SphereCollider3DRef = ObjectRef<SphereCollider3D>;
+	using SphereCollider3DConstRef = std::shared_ptr<const SphereCollider3D>;
+	using SphereCollider3DRef = std::shared_ptr<SphereCollider3D>;
 
 	class NAZARA_PHYSICS3D_API SphereCollider3D : public Collider3D
 	{

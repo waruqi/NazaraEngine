@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2017 Jérôme Leclercq
+// Copyright (C) 2017 Jérôme Leclercq
 // This file is part of the "Nazara Engine - Utility module"
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
@@ -15,16 +15,17 @@
 #include <Nazara/Utility/Config.hpp>
 #include <Nazara/Utility/Enums.hpp>
 #include <array>
+#include <memory>
 
 namespace Nz
 {
 	class VertexDeclaration;
 
-	using VertexDeclarationConstRef = ObjectRef<const VertexDeclaration>;
+	using VertexDeclarationConstRef = std::shared_ptr<const VertexDeclaration>;
 	using VertexDeclarationLibrary = ObjectLibrary<VertexDeclaration>;
-	using VertexDeclarationRef = ObjectRef<VertexDeclaration>;
+	using VertexDeclarationRef = std::shared_ptr<VertexDeclaration>;
 
-	class NAZARA_UTILITY_API VertexDeclaration : public RefCounted
+	class NAZARA_UTILITY_API VertexDeclaration
 	{
 		friend VertexDeclarationLibrary;
 		friend class Utility;
@@ -46,7 +47,7 @@ namespace Nz
 
 			VertexDeclaration& operator=(const VertexDeclaration& declaration);
 
-			static VertexDeclaration* Get(VertexLayout layout);
+			static const VertexDeclarationRef& Get(VertexLayout layout);
 			static bool IsTypeSupported(ComponentType type);
 			template<typename... Args> static VertexDeclarationRef New(Args&&... args);
 
@@ -75,7 +76,7 @@ namespace Nz
 			std::array<Component, VertexComponent_Max + 1> m_components;
 			std::size_t m_stride;
 
-			static std::array<VertexDeclaration, VertexLayout_Max + 1> s_declarations;
+			static std::array<VertexDeclarationRef, VertexLayout_Max + 1> s_declarations;
 			static VertexDeclarationLibrary::LibraryMap s_library;
 	};
 }

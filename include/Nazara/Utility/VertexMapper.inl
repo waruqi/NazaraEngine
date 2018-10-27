@@ -13,7 +13,7 @@ namespace Nz
 	SparsePtr<T> VertexMapper::GetComponentPtr(VertexComponent component)
 	{
 		// On récupère la déclaration depuis le buffer
-		const VertexDeclaration* declaration = m_mapper.GetBuffer()->GetVertexDeclaration();
+		const VertexDeclarationConstRef& declaration = m_mapper.GetBuffer()->GetVertexDeclaration();
 
 		// Ensuite le composant qui nous intéresse
 		bool enabled;

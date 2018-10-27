@@ -10,73 +10,49 @@ namespace Nz
 	template<typename... Args>
 	BoxCollider3DRef BoxCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<BoxCollider3D> object(new BoxCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<BoxCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	CapsuleCollider3DRef CapsuleCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<CapsuleCollider3D> object(new CapsuleCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<CapsuleCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	CompoundCollider3DRef CompoundCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<CompoundCollider3D> object(new CompoundCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<CompoundCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	ConeCollider3DRef ConeCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<ConeCollider3D> object(new ConeCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ConeCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	ConvexCollider3DRef ConvexCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<ConvexCollider3D> object(new ConvexCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ConvexCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	CylinderCollider3DRef CylinderCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<CylinderCollider3D> object(new CylinderCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<CylinderCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	NullCollider3DRef NullCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<NullCollider3D> object(new NullCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<NullCollider3D>(std::forward<Args>(args)...);
 	}
 
 	template<typename... Args>
 	SphereCollider3DRef SphereCollider3D::New(Args&&... args)
 	{
-		std::unique_ptr<SphereCollider3D> object(new SphereCollider3D(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<SphereCollider3D>(std::forward<Args>(args)...);
 	}
 }
 

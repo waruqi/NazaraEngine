@@ -17,17 +17,18 @@
 #include <Nazara/Math/BoundingVolume.hpp>
 #include <Nazara/Math/Frustum.hpp>
 #include <Nazara/Math/Matrix4.hpp>
+#include <memory>
 
 namespace Nz
 {
 	class AbstractRenderQueue;
 	class InstancedRenderable;
 
-	using InstancedRenderableConstRef = ObjectRef<const InstancedRenderable>;
+	using InstancedRenderableConstRef = std::shared_ptr<const InstancedRenderable>;
 	using InstancedRenderableLibrary = ObjectLibrary<InstancedRenderable>;
-	using InstancedRenderableRef = ObjectRef<InstancedRenderable>;
+	using InstancedRenderableRef = std::shared_ptr<InstancedRenderable>;
 
-	class NAZARA_GRAPHICS_API InstancedRenderable : public RefCounted
+	class NAZARA_GRAPHICS_API InstancedRenderable
 	{
 		public:
 			struct InstanceData;

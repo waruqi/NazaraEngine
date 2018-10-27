@@ -31,10 +31,7 @@ namespace Nz
 	template<typename... Args>
 	IconRef Icon::New(Args&&... args)
 	{
-		std::unique_ptr<Icon> object(new Icon(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<Icon>(std::forward<Args>(args)...);
 	}
 }
 

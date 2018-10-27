@@ -35,10 +35,7 @@ namespace Nz
 	template<typename... Args>
 	ParticleFunctionControllerRef ParticleFunctionController::New(Args&&... args)
 	{
-		std::unique_ptr<ParticleFunctionController> object(new ParticleFunctionController(std::forward<Args>(args)...));
-		object->SetPersistent(false);
-
-		return object.release();
+		return std::make_shared<ParticleFunctionController>(std::forward<Args>(args)...);
 	}
 }
 

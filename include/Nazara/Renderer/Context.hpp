@@ -20,13 +20,13 @@ namespace Nz
 {
 	class Context;
 
-	using ContextConstRef = ObjectRef<const Context>;
+	using ContextConstRef = std::shared_ptr<const Context>;
 	using ContextLibrary = ObjectLibrary<Context>;
-	using ContextRef = ObjectRef<Context>;
+	using ContextRef = std::shared_ptr<Context>;
 
 	class ContextImpl;
 
-	class NAZARA_RENDERER_API Context : public RefCounted
+	class NAZARA_RENDERER_API Context
 	{
 		friend ContextImpl;
 		friend ContextLibrary;

@@ -33,11 +33,11 @@ namespace Nz
 
 	class Model;
 
-	using ModelConstRef = ObjectRef<const Model>;
+	using ModelConstRef = std::shared_ptr<const Model>;
 	using ModelLibrary = ObjectLibrary<Model>;
 	using ModelLoader = ResourceLoader<Model, ModelParameters>;
 	using ModelManager = ResourceManager<Model, ModelParameters>;
-	using ModelRef = ObjectRef<Model>;
+	using ModelRef = std::shared_ptr<Model>;
 	using ModelSaver = ResourceSaver<Model, ModelParameters>;
 
 	class NAZARA_GRAPHICS_API Model : public InstancedRenderable, public Resource
@@ -69,7 +69,7 @@ namespace Nz
 			bool SetMaterial(const String& subMeshName, MaterialRef material);
 			bool SetMaterial(std::size_t skinIndex, const String& subMeshName, MaterialRef material);
 
-			virtual void SetMesh(Mesh* mesh);
+			virtual void SetMesh(MeshRef mesh);
 
 			Model& operator=(const Model& node) = default;
 			Model& operator=(Model&& node) = delete;

@@ -84,7 +84,7 @@ namespace Nz
 	}
 
 	IndexMapper::IndexMapper(SubMesh* subMesh, BufferAccess access) :
-	IndexMapper(subMesh->GetIndexBuffer(), access, (subMesh->GetIndexBuffer()) ? 0 : subMesh->GetVertexCount())
+	IndexMapper(subMesh->GetIndexBuffer().get(), access, (subMesh->GetIndexBuffer()) ? 0 : subMesh->GetVertexCount())
 	{
 	}
 
@@ -109,7 +109,7 @@ namespace Nz
 	}
 
 	IndexMapper::IndexMapper(const SubMesh* subMesh, BufferAccess access) :
-	IndexMapper(subMesh->GetIndexBuffer(), access, (subMesh->GetIndexBuffer()) ? 0 : subMesh->GetVertexCount())
+	IndexMapper(subMesh->GetIndexBuffer().get(), access, (subMesh->GetIndexBuffer()) ? 0 : subMesh->GetVertexCount())
 	{
 	}
 

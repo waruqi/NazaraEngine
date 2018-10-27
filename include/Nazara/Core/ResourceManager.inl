@@ -31,17 +31,17 @@ namespace Nz
 	* \param filePath Path to the asset that will be loaded
 	*/
 	template<typename Type, typename Parameters>
-	ObjectRef<Type> ResourceManager<Type, Parameters>::Get(const String& filePath)
+	std::shared_ptr<Type> ResourceManager<Type, Parameters>::Get(const String& filePath)
 	{
 		String absolutePath = File::AbsolutePath(filePath);
 		auto it = Type::s_managerMap.find(absolutePath);
 		if (it == Type::s_managerMap.end())
 		{
-			ObjectRef<Type> resource = Type::LoadFromFile(absolutePath, GetDefaultParameters());
+			std::shared_ptr<Type> resource = Type::LoadFromFile(absolutePath, GetDefaultParameters());
 			if (!resource)
 			{
 				NazaraError("Failed to load resource from file: " + absolutePath);
-				return ObjectRef<Type>();
+				return std::shared_ptr<Type>();
 			}
 
 			NazaraDebug("Loaded resource from file " + absolutePath);
@@ -71,7 +71,7 @@ namespace Nz
 		auto it = Type::s_managerMap.begin();
 		while (it != Type::s_managerMap.end())
 		{
-			const ObjectRef<Type>& ref = it->second;
+			const std::shared_ptr<Type>& ref = it->second;
 			if (ref->GetReferenceCount() == 1) // Are we the only ones to own the resource ?
 			{
 				NazaraDebug("Purging resource from file " + ref->GetFilePath());
@@ -89,7 +89,7 @@ namespace Nz
 	* \param resource Object to associate with
 	*/
 	template<typename Type, typename Parameters>
-	void ResourceManager<Type, Parameters>::Register(const String& filePath, ObjectRef<Type> resource)
+	void ResourceManager<Type, Parameters>::Register(const String& filePath, std::shared_ptr<Type> resource)
 	{
 		String absolutePath = File::AbsolutePath(filePath);
 
