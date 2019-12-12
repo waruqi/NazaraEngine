@@ -169,12 +169,6 @@ namespace Ndk
 					//nodeClass.SetMethod("GetChilds", &Nz::Node::GetChilds);
 			node.BindMethod("GetDown", &Nz::Node::GetDown);
 			node.BindMethod("GetForward", &Nz::Node::GetForward);
-			node.BindMethod("GetInheritPosition", &Nz::Node::GetInheritPosition);
-			node.BindMethod("GetInheritRotation", &Nz::Node::GetInheritRotation);
-			node.BindMethod("GetInheritScale", &Nz::Node::GetInheritScale);
-			node.BindMethod("GetInitialPosition", &Nz::Node::GetInitialPosition);
-			//nodeClass.SetMethod("GetInitialRotation", &Nz::Node::GetInitialRotation);
-			node.BindMethod("GetInitialScale", &Nz::Node::GetInitialScale);
 			node.BindMethod("GetLeft", &Nz::Node::GetLeft);
 			node.BindMethod("GetNodeType", &Nz::Node::GetNodeType);
 			//nodeClass.SetMethod("GetParent", &Nz::Node::GetParent);
@@ -190,12 +184,6 @@ namespace Ndk
 			node.BindMethod("GetBackward", &Nz::Node::GetBackward);
 			node.BindMethod("GetDown", &Nz::Node::GetDown);
 			node.BindMethod("GetForward", &Nz::Node::GetForward);
-			node.BindMethod("GetInheritPosition", &Nz::Node::GetInheritPosition);
-			node.BindMethod("GetInheritRotation", &Nz::Node::GetInheritRotation);
-			node.BindMethod("GetInheritScale", &Nz::Node::GetInheritScale);
-			node.BindMethod("GetInitialPosition", &Nz::Node::GetInitialPosition);
-			node.BindMethod("GetInitialRotation", &Nz::Node::GetInitialRotation);
-			node.BindMethod("GetInitialScale", &Nz::Node::GetInitialScale);
 			node.BindMethod("GetLeft", &Nz::Node::GetLeft);
 			node.BindMethod("GetNodeType", &Nz::Node::GetNodeType);
 			node.BindMethod("GetPosition", &Nz::Node::GetPosition, Nz::CoordSys_Global);
@@ -203,9 +191,6 @@ namespace Ndk
 			node.BindMethod("GetRotation", &Nz::Node::GetRotation, Nz::CoordSys_Global);
 			node.BindMethod("GetScale", &Nz::Node::GetScale, Nz::CoordSys_Global);
 			node.BindMethod("GetUp", &Nz::Node::GetUp);
-
-			node.BindMethod("SetInitialPosition", (void(Nz::Node::*)(const Nz::Vector3f&)) &Nz::Node::SetInitialPosition);
-			node.BindMethod("SetInitialRotation", (void(Nz::Node::*)(const Nz::Quaternionf&)) &Nz::Node::SetInitialRotation);
 
 			node.BindMethod("SetPosition", (void(Nz::Node::*)(const Nz::Vector3f&, Nz::CoordSys)) &Nz::Node::SetPosition, Nz::CoordSys_Local);
 			node.BindMethod("SetRotation", (void(Nz::Node::*)(const Nz::Quaternionf&, Nz::CoordSys)) &Nz::Node::SetRotation, Nz::CoordSys_Local);
@@ -292,33 +277,6 @@ namespace Ndk
 				}
 
 				lua.Error("No matching overload for method SetScale");
-				return 0;
-			});
-
-			node.BindMethod("SetInitialScale", [] (Nz::LuaState& lua, Nz::Node& instance, std::size_t argumentCount) -> int
-			{
-				std::size_t argCount = std::min<std::size_t>(argumentCount, 4U);
-
-				int argIndex = 2;
-				switch (argCount)
-				{
-					case 1:
-					{
-						if (lua.IsOfType(argIndex, Nz::LuaType_Number))
-							instance.SetInitialScale(lua.Check<float>(&argIndex));
-						else
-							instance.SetInitialScale(lua.Check<Nz::Vector2f>(&argIndex));
-
-						return 0;
-					}
-
-					case 2:
-					case 3:
-						instance.SetInitialScale(lua.Check<Nz::Vector3f>(&argIndex));
-						return 0;
-				}
-
-				lua.Error("No matching overload for method SetInitialScale");
 				return 0;
 			});
 		}

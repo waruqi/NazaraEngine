@@ -32,12 +32,6 @@ namespace Nz
 			const std::vector<Node*>& GetChilds() const;
 			virtual Vector3f GetDown() const;
 			virtual Vector3f GetForward() const;
-			bool GetInheritPosition() const;
-			bool GetInheritRotation() const;
-			bool GetInheritScale() const;
-			Vector3f GetInitialPosition() const;
-			Quaternionf GetInitialRotation() const;
-			Vector3f GetInitialScale() const;
 			virtual Vector3f GetLeft() const;
 			virtual NodeType GetNodeType() const;
 			const Node* GetParent() const;
@@ -61,20 +55,13 @@ namespace Nz
 			Node& Scale(float scale);
 			Node& Scale(float scaleX, float scaleY, float scaleZ = 1.f);
 
-			void SetInheritRotation(bool inheritRotation);
-			void SetInheritScale(bool inheritScale);
-			void SetInheritPosition(bool inheritPosition);
-			void SetInitialRotation(const Quaternionf& quat);
-			void SetInitialScale(const Vector3f& scale);
-			void SetInitialScale(float scale);
-			void SetInitialScale(float scaleX, float scaleY, float scaleZ = 1.f);
-			void SetInitialPosition(const Vector3f& translation);
-			void SetInitialPosition(float translationX, float translationXY, float translationZ = 0.f);
+
 			void SetParent(const Node* node = nullptr, bool keepDerived = false);
 			void SetParent(const Node& node, bool keepDerived = false);
 			void SetPosition(const Vector3f& translation, CoordSys coordSys = CoordSys_Local);
 			void SetPosition(float translationX, float translationY, float translationZ = 0.f, CoordSys coordSys = CoordSys_Local);
 			void SetRotation(const Quaternionf& quat, CoordSys coordSys = CoordSys_Local);
+			void SetScale(const Vector2f& scale, CoordSys coordSys = CoordSys_Local);
 			void SetScale(const Vector3f& scale, CoordSys coordSys = CoordSys_Local);
 			void SetScale(float scale, CoordSys coordSys = CoordSys_Local);
 			void SetScale(float scaleX, float scaleY, float scaleZ = 1.f, CoordSys coordSys = CoordSys_Local);
@@ -108,19 +95,13 @@ namespace Nz
 			mutable std::vector<Node*> m_childs;
 			mutable Matrix4f m_transformMatrix;
 			mutable Quaternionf m_derivedRotation;
-			Quaternionf m_initialRotation;
 			Quaternionf m_rotation;
 			mutable Vector3f m_derivedPosition;
 			mutable Vector3f m_derivedScale;
-			Vector3f m_initialPosition;
-			Vector3f m_initialScale;
 			Vector3f m_position;
 			Vector3f m_scale;
 			const Node* m_parent;
 			mutable bool m_derivedUpdated;
-			bool m_inheritPosition;
-			bool m_inheritRotation;
-			bool m_inheritScale;
 			mutable bool m_transformMatrixUpdated;
 	};
 }
