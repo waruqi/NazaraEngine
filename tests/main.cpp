@@ -15,6 +15,5 @@ int main(int argc, char* argv[])
 	Nz::Log::GetLogger()->EnableStdReplication(false);
 
 	int result = Catch::Session().run(argc, argv);
-
 	return result;
 }
