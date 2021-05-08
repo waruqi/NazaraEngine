@@ -3,14 +3,6 @@ name: Windows-Build
 on:
   pull_request:
   push:
-    paths-ignore:
-      - '.github/workflows/linux-build.yml'
-      - '.gitignore'
-      - 'LICENSE'
-      - 'CHANGELOG.md'
-      - 'README.md'
-      - 'README_en.md'
-      - 'README_fr.md'
 
 jobs:
   build:
