@@ -13,7 +13,6 @@ int main(int argc, char* argv[])
 	Ndk::Application app(argc, argv);
 
 	Nz::Log::GetLogger()->EnableStdReplication(false);
-
 	int result = Catch::Session().run(argc, argv);
 	return result;
 }
