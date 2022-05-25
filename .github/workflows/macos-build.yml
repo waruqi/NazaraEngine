@@ -5,9 +5,6 @@ on:
   push:
     paths-ignore:
       - '.github/workflows/coverage.yml'
-      - '.github/workflows/linux-build.yml'
-      - '.github/workflows/msys2-build.yml'
-      - '.github/workflows/windows-build.yml'
       - '.gitignore'
       - 'LICENSE'
       - 'CHANGELOG.md'
@@ -62,7 +59,7 @@ jobs:
 
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --shadernodes=y --tests=y --unitybuild=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes
+      run: xmake config --shadernodes=y --tests=y --unitybuild=y --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --yes -vD
 
     # Build the engine
     - name: Build Nazara
