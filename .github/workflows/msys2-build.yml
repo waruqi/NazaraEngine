@@ -63,7 +63,7 @@ jobs:
     - name: Setup xmake
       if: steps.xmake_cache.outputs.cache-hit != 'true'
       run: |
-        git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b dev xmake_git
+        git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b test xmake_git
         cd xmake_git
         make build
 
