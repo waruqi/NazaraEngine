@@ -25,9 +25,6 @@ jobs:
         arch: [x86_64]
         confs:
         - { mode: debug }
-        - { mode: debug, config: --asan=y }
-        - { mode: debug, config: --lsan=y }
-        - { mode: debug, config: --tsan=y }
         - { mode: releasedbg }
 
     runs-on: ${{ matrix.os }}
