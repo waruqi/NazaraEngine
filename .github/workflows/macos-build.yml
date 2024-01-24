@@ -49,7 +49,7 @@ jobs:
     - name: Setup xmake
       uses: xmake-io/github-action-setup-xmake@v1
       with:
-        xmake-version: branch@test
+        xmake-version: branch@dev
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
@@ -65,9 +65,7 @@ jobs:
     - run: gtimeout --version
 
     - name: Configure xmake and install dependencies
-      run: gtimeout --signal=SIGINT 5m xmake config -vD --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
-      env:
-        XMAKE_PROFILE: stuck
+      run: xmake config -vD --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
  
     # Build the engine
     - name: Build Nazara
