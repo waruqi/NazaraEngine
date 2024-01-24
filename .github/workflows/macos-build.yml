@@ -18,6 +18,9 @@ on:
 
 jobs:
   build:
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macos
+        cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
