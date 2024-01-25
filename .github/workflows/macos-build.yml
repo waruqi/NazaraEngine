@@ -50,7 +50,7 @@ jobs:
       uses: xmake-io/github-action-setup-xmake@v1
       with:
         xmake-version: branch@co
-        actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}-test2
+        actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}-test
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
@@ -67,7 +67,7 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: macOS-${{ matrix.arch }}-${{ matrix.confs.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}-test
+        key: macOS-${{ matrix.arch }}-${{ matrix.confs.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}-test2
 
     # Setup compilation mode and install project dependencies
     - run: brew install coreutils 
