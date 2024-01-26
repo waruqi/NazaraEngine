@@ -50,42 +50,21 @@ jobs:
       uses: xmake-io/github-action-setup-xmake@v1
       with:
         xmake-version: branch@co
-        actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}-test
+        actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}-test1
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
       run: xmake repo --update
-
-    # Fetch xmake dephash
-    - name: Retrieve dependencies hash
-      id: dep_hash
-      run: echo "hash=$(xmake l utils.ci.packageskey)" >> $GITHUB_OUTPUT
-
-    # Cache xmake dependencies
-    - name: Restore cached xmake dependencies
-      id: restore-depcache
-      uses: actions/cache/restore@v4
-      with:
-        path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: macOS-${{ matrix.arch }}-${{ matrix.confs.mode }}-${{ steps.dep_hash.outputs.hash }}-W${{ steps.cache_key.outputs.key }}-test2
 
     # Setup compilation mode and install project dependencies
     - run: brew install coreutils 
     - run: gtimeout --version
 
     - name: Configure xmake and install dependencies
-      run: gtimeout --signal=SIGINT 1h xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
+      run: gtimeout --signal=SIGINT 40m xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
       env:
         XMAKE_PROFILE: stuck
   
-    # Save dependencies
-    - name: Save cached xmake dependencies
-      if: ${{ !steps.restore-depcache.outputs.cache-hit }}
-      uses: actions/cache/save@v4
-      with:
-        path: ${{ env.XMAKE_GLOBALDIR }}/.xmake/packages
-        key: ${{ steps.restore-depcache.outputs.cache-primary-key }}
-
     # Cache assets downloading
     - name: Restore cached assets
       id: restore-assets
