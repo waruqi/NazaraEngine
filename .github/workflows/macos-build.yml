@@ -64,6 +64,7 @@ jobs:
 
     - name: Configure xmake and install dependencies
       run: gtimeout --signal=SIGINT 30m xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
+      env:
         XMAKE_PROFILE: stuck
   
     # Save dependencies
