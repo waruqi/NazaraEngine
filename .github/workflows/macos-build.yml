@@ -19,7 +19,7 @@ on:
 jobs:
   build:
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macos
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macos-${{ matrix.confs.mode }}-${{ matrix.confs.config }}
         cancel-in-progress: true
     strategy:
       fail-fast: false
@@ -28,6 +28,9 @@ jobs:
         arch: [x86_64]
         confs:
         - { mode: debug }
+        - { mode: debug, config: --asan=y }
+        - { mode: debug, config: --lsan=y }
+        - { mode: debug, config: --tsan=y }
         - { mode: releasedbg }
 
     runs-on: ${{ matrix.os }}
@@ -60,7 +63,8 @@ jobs:
     - run: gtimeout --version
 
     - name: Configure xmake and install dependencies
-      run: xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
+      run: gtimeout --signal=SIGINT 30m xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
+        XMAKE_PROFILE: stuck
   
     # Save dependencies
     - name: Save cached xmake dependencies
