@@ -66,8 +66,8 @@ jobs:
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
       run: |
-        git clone https://github.com/xmake-io/xmake.git -b test2
-        $Env:XMAKE_PROGRAM_DIR = $(Resolve-Path ./xmake)
+        git clone https://github.com/xmake-io/xmake.git -b test2 xmakesrc
+        $Env:XMAKE_PROGRAM_DIR = $(Resolve-Path ./xmakesrc/xmake)
         xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.mode }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
 
     # Save dependencies
