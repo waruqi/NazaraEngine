@@ -49,7 +49,7 @@ jobs:
     - name: Setup xmake
       uses: xmake-io/github-action-setup-xmake@v1
       with:
-        xmake-version: branch@test
+        xmake-version: branch@co
         actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}-test1
 
     # Update xmake repository (in order to have the file that will be cached)
