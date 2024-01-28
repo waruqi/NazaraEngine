@@ -7,7 +7,7 @@
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
 #include <iostream>
-
+ 
 int main(int argc, char* argv[])
 {
 	// This "example" has only one purpose: Giving an empty project for you to test whatever you want
