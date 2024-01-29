@@ -57,7 +57,7 @@ jobs:
       run: xmake repo --update
 
     # Setup compilation mode and install project dependencies
-    - run: brew install coreutils 
+    - run: brew install coreutils
     - run: gtimeout --version
 
     - name: Configure xmake and install dependencies
