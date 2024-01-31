@@ -61,9 +61,10 @@ jobs:
     - run: gtimeout --version
 
     - name: Configure xmake and install dependencies
-      run: gtimeout --signal=SIGINT 1h xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
+      run: sudo gtimeout --signal=SIGINT 1h xmake config --arch=${{ matrix.arch }} --mode=${{ matrix.confs.mode }} ${{ matrix.confs.config }} --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
       env:
         XMAKE_PROFILE: stuck
+        XMAKE_ROOT: y
   
     # Cache assets downloading
     - name: Restore cached assets
