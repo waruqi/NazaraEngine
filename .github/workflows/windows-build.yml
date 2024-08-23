@@ -51,7 +51,7 @@ jobs:
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
-      run:
+      run: |
         xmake update -s dev
         xmake update -s dev
         xmake repo --update -vD
