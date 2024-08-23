@@ -53,6 +53,7 @@ jobs:
     - name: Update xmake repository
       run: |
         xmake update -s dev
+        Start-Sleep -Seconds 10
         xmake repo --update -vD
 
     # Fetch xmake dephash
