@@ -48,11 +48,12 @@ jobs:
         xmake-version: branch@dev
         actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
-    - run: xmake update -s dev
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
-      run: xmake repo --update -vD
+      run:
+        xmake update -s dev
+        xmake repo --update -vD
 
     # Fetch xmake dephash
     - name: Retrieve dependencies hash
