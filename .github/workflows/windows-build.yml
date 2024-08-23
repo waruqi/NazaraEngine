@@ -48,7 +48,7 @@ jobs:
         xmake-version: branch@dev
         actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
-    - run: xmake update -s toolchain
+    #- run: xmake update -s toolchain
 
     # Update xmake repository (in order to have the file that will be cached)
     - name: Update xmake repository
