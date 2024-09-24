@@ -61,17 +61,12 @@ jobs:
         xmake-version: branch@dev
         actions-cache-folder: .xmake-cache-W${{ steps.cache_key.outputs.key }}
 
-    # Update xmake to toolchain
-    - name: Switch to toolchain branch
-      run: xmake update -s toolchain
-
-    # Update xmake repository (in order to have the file that will be cached)
-    - name: Update xmake repository
-      run: xmake repo --update
-
     # Setup compilation mode and install project dependencies
     - name: Configure xmake and install dependencies
-      run: xmake config --arch=${{ matrix.config.arch }} --mode=coverage --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
+      run: |
+        xmake update -s toolchain
+        xmake repo --update
+        xmake config --arch=${{ matrix.config.arch }} --mode=coverage --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
 
     # Cache assets downloading
     - name: Restore cached assets
