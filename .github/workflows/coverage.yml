@@ -65,6 +65,7 @@ jobs:
     - name: Configure xmake and install dependencies
       run: |
         xmake update -s toolchain
+        sleep 5
         xmake repo --update
         xmake config --arch=${{ matrix.config.arch }} --mode=coverage --ccache=n --ffmpeg=y --shadernodes=y --tests=y --unitybuild=y --yes
 
